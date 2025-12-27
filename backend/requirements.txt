@@ -1,0 +1,14 @@
+fastapi==0.109.0
+uvicorn==0.27.0
+python-dotenv==1.0.0
+langchain==0.1.5
+langchain-openai==0.0.5
+langgraph==0.0.20
+pydantic==2.5.3
+python-multipart==0.0.6
+httpx==0.26.0
+Pillow==10.2.0
+aiofiles==23.2.1
+# Note: LiteLLM has compatibility issues with Python 3.9 and pydantic 2.5
+# Using direct httpx calls to OpenRouter instead (see openai_service.py)
+
