@@ -17,6 +17,8 @@ from app.agents import (
     WarrantyClaimsAgent,
     CrossSellingAgent,
     OrderFulfillmentAgent,
+    VoiceAnalyticsAgent,
+    CustomerSegmentationAgent,
 )
 from app.data.mock_data import MockDataStore
 from app.services.llm_service import LLMService
@@ -35,6 +37,8 @@ agents = {
     "warranty_claims": WarrantyClaimsAgent(),
     "cross_selling": CrossSellingAgent(),
     "order_fulfillment": OrderFulfillmentAgent(),
+    "voice_analytics": VoiceAnalyticsAgent(),
+    "customer_segmentation": CustomerSegmentationAgent(),
 }
 
 
@@ -156,6 +160,22 @@ async def list_agents():
             "icon": "📦",
             "category": "Logistics",
             "features": ["Order Processing", "Inventory Check", "Route Optimization", "Delivery Tracking"]
+        },
+        {
+            "id": "voice_analytics",
+            "name": "Voice Analytics",
+            "description": "Customer service call analysis with sentiment detection",
+            "icon": "🎙️",
+            "category": "Customer Service",
+            "features": ["Sentiment Analysis", "Call Transcription", "Agent Performance", "Customer Insights"]
+        },
+        {
+            "id": "customer_segmentation",
+            "name": "Customer Segmentation",
+            "description": "ML-powered customer tagging and behavioral segmentation",
+            "icon": "👥",
+            "category": "Analytics",
+            "features": ["RFM Analysis", "Churn Prediction", "Segment Tagging", "LTV Prediction"]
         },
     ]
     return {"agents": agent_list}

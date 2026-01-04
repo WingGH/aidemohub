@@ -132,6 +132,18 @@ const agentPrompts = {
     "Process order for 50 Korean Tteokbokki and 75 Green Tea",
     "Check inventory for SKU001 across all warehouses",
     "How does the fulfillment workflow work?"
+  ],
+  voice_analytics: [
+    "Show me all calls overview",
+    "Analyze call CALL-001",
+    "Show me calls about product returns",
+    "What's the average sentiment score?"
+  ],
+  customer_segmentation: [
+    "Show all customers overview",
+    "Analyze customer Alice Chan",
+    "Show customers in the At Risk segment",
+    "What is RFM analysis?"
   ]
 }
 

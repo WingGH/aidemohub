@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { 
   ArrowLeft, 
   MessageSquare, 
@@ -14,7 +14,10 @@ import {
   Cloud,
   Eye,
   Brain,
-  GitBranch
+  GitBranch,
+  Table,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react'
 
 // Architecture component icons
@@ -58,7 +61,18 @@ const useCaseDetails = {
       { type: "data", name: "CRM System", description: "Customer profiles, preferences, and interaction history" },
       { type: "api", name: "Scheduling API", description: "Calendar integration for test drives and service booking" },
       { type: "api", name: "Financing Calculator", description: "Loan/lease calculation service with rate APIs" }
-    ]
+    ],
+    sampleData: {
+      title: "Vehicle Inventory",
+      description: "Sample vehicles with pricing and availability",
+      items: [
+        { id: "V001", name: "2024 Toyota Camry", details: "$35,000 - Silver - Available" },
+        { id: "V002", name: "2024 Honda Accord", details: "$38,000 - White - Available" },
+        { id: "V003", name: "2024 BMW 3 Series", details: "$55,000 - Black - Available" },
+        { id: "V004", name: "2024 Mercedes C-Class", details: "$58,000 - Blue - Reserved" },
+        { id: "V005", name: "2024 Lexus ES", details: "$48,000 - Pearl White - Available" }
+      ]
+    }
   },
   damage_assessment: {
     title: "Vehicle Damage Assessment",
@@ -86,7 +100,16 @@ const useCaseDetails = {
       { type: "data", name: "Parts & Pricing DB", description: "Vehicle parts catalog with repair cost estimates" },
       { type: "vectordb", name: "Damage Examples DB", description: "Vector store of historical damage cases for comparison" },
       { type: "api", name: "Insurance Integration", description: "Claims submission and threshold verification" }
-    ]
+    ],
+    sampleData: {
+      title: "Parts & Repair Pricing",
+      description: "Auto parts inventory with pricing for estimates",
+      items: [
+        { id: "P001", name: "Brake Pads (Front)", details: "$120 - 45 in stock" },
+        { id: "P002", name: "Brake Rotors", details: "$180 - 20 in stock" },
+        { id: "P003", name: "Timing Belt", details: "$250 - 15 in stock" }
+      ]
+    }
   },
   document_processing: {
     title: "Intelligent Document Processing",
@@ -172,7 +195,15 @@ const useCaseDetails = {
       { type: "agent", name: "Gap Analysis Engine", description: "LangGraph workflow for comparison and gap detection" },
       { type: "vision", name: "PDF Parser", description: "Document extraction from regulatory PDFs" },
       { type: "data", name: "Risk Scoring Model", description: "Priority classification for compliance gaps" }
-    ]
+    ],
+    sampleData: {
+      title: "Internal SOPs",
+      description: "Standard Operating Procedures for compliance comparison",
+      items: [
+        { id: "SOP-001", name: "Pharmaceutical Storage Guidelines", details: "v2.1 - Temperature & Humidity Control" },
+        { id: "SOP-002", name: "Import Documentation Requirements", details: "v1.5 - Certificates & Customs" }
+      ]
+    }
   },
   sales_trainer: {
     title: "Role-Play Sales Trainer",
@@ -229,7 +260,17 @@ const useCaseDetails = {
       { type: "data", name: "Supplier Directory", description: "Supplier catalog matched to product categories" },
       { type: "agent", name: "Sentiment Analyzer", description: "NLP pipeline for sentiment classification" },
       { type: "vectordb", name: "Product Embeddings", description: "Vector matching for trend-to-supplier recommendations" }
-    ]
+    ],
+    sampleData: {
+      title: "Trending Items",
+      description: "Current social media trend data in Hong Kong",
+      items: [
+        { id: "T001", name: "Korean Rosé Tteokbokki", details: "15,420 mentions (+340%) - Instagram" },
+        { id: "T002", name: "Oat Milk Coffee", details: "8,900 mentions (+120%) - Instagram" },
+        { id: "T003", name: "Matcha Desserts", details: "12,000 mentions (+200%) - TikTok" },
+        { id: "T004", name: "Japanese Whisky", details: "4,200 mentions (+65%) - Instagram" }
+      ]
+    }
   },
   warranty_claims: {
     title: "Warranty Claims Processing",
@@ -258,7 +299,16 @@ const useCaseDetails = {
       { type: "data", name: "Claims History", description: "Past claims for duplicate detection" },
       { type: "agent", name: "Fraud Detection Model", description: "Rule-based + ML scoring for fraud indicators" },
       { type: "api", name: "CRM Integration", description: "Customer notification and case management" }
-    ]
+    ],
+    sampleData: {
+      title: "Warranty Records",
+      description: "Sample product registrations with warranty status",
+      items: [
+        { id: "SN-12345678", name: "Smart Air Purifier", details: "Valid until 2026-06-15 - No claims" },
+        { id: "SN-87654321", name: "Robot Vacuum", details: "Valid until 2025-12-01 - 1 previous claim" },
+        { id: "SN-11111111", name: "Electric Kettle", details: "EXPIRED 2024-01-10 - No claims" }
+      ]
+    }
   },
   cross_selling: {
     title: "Cross-Selling Intelligence",
@@ -316,11 +366,103 @@ const useCaseDetails = {
       { type: "data", name: "Warehouse Layout", description: "Zone mapping for pick route optimization" },
       { type: "api", name: "Carrier APIs", description: "Shipping rate and tracking integrations" },
       { type: "agent", name: "Human-in-the-Loop", description: "Approval workflow for high-value orders" }
-    ]
+    ],
+    sampleData: {
+      title: "Warehouse Inventory",
+      description: "Multi-warehouse inventory with zone mapping",
+      items: [
+        { id: "SKU001", name: "Organic Oat Milk 1L", details: "500 units (HK Central) + 300 units (Kowloon)" },
+        { id: "SKU002", name: "Korean Rosé Tteokbokki", details: "200 units (HK Central) - Zone B3" },
+        { id: "SKU003", name: "Premium Green Tea", details: "1,000 units (HK Central) - Zone A2" },
+        { id: "SKU005", name: "Plant-Based Burger Patties", details: "150 units (Kowloon) - Frozen Zone F1" }
+      ]
+    }
+  },
+  voice_analytics: {
+    title: "Voice Analytics",
+    subtitle: "Customer service call sentiment analysis",
+    description: "Analyzes customer service call recordings to extract sentiment, identify pain points, evaluate agent performance, and generate actionable insights for service improvement. Includes audio transcription and real-time sentiment journey tracking.",
+    howItWorks: [
+      "Upload or receive customer service call recording",
+      "AI transcribes audio to text (or use existing transcript)",
+      "Analyze sentiment throughout the conversation",
+      "Identify key moments: positive peaks and negative triggers",
+      "Evaluate agent communication and resolution effectiveness",
+      "Generate insights and improvement recommendations"
+    ],
+    tryPrompts: [
+      "Show me all calls overview",
+      "Analyze call CALL-001",
+      "What's the average sentiment score?",
+      "Show calls about billing disputes"
+    ],
+    technologies: ["Speech-to-Text", "Sentiment Analysis", "NLP", "Agent Analytics"],
+    businessValue: "Improves customer satisfaction by 25% with data-driven coaching",
+    architecture: [
+      { type: "llm", name: "Large Language Model", description: "GPT-4 for transcript analysis and insights" },
+      { type: "api", name: "Speech-to-Text API", description: "Whisper / Google STT for audio transcription" },
+      { type: "agent", name: "Sentiment Analyzer", description: "NLP model for emotion and sentiment scoring" },
+      { type: "data", name: "Call Recordings DB", description: "Audio files with metadata and transcripts" },
+      { type: "data", name: "Agent Performance DB", description: "Historical performance metrics by agent" },
+      { type: "vectordb", name: "Similar Cases", description: "Vector search for comparable call patterns" }
+    ],
+    sampleData: {
+      title: "Sample Call Recordings",
+      description: "Pre-loaded customer service call transcripts with sentiment labels",
+      items: [
+        { id: "CALL-001", name: "Product Return - Resolved", details: "4:32 duration, Positive outcome, CSAT 5/5" },
+        { id: "CALL-002", name: "Billing Dispute - Resolved", details: "6:15 duration, Mixed sentiment, CSAT 3/5" },
+        { id: "CALL-003", name: "Product Inquiry - Sale", details: "3:45 duration, Very positive, CSAT 5/5" },
+        { id: "CALL-004", name: "Cancellation - Retained", details: "8:20 duration, Negative to positive, CSAT 4/5" }
+      ]
+    }
+  },
+  customer_segmentation: {
+    title: "Customer Segmentation",
+    subtitle: "ML-powered behavioral analysis and tagging",
+    description: "Uses machine learning models to segment customers based on purchasing behavior using RFM (Recency, Frequency, Monetary) analysis. Predicts customer lifetime value, identifies churn risk, and generates personalized marketing recommendations.",
+    howItWorks: [
+      "Load customer transaction and behavior data",
+      "Calculate RFM scores for each customer",
+      "Apply ML model to predict segment and churn risk",
+      "Generate customer lifetime value predictions",
+      "Create personalized action recommendations",
+      "Visualize segment distribution and trends"
+    ],
+    tryPrompts: [
+      "Show all customers overview",
+      "Analyze customer Alice Chan",
+      "Show customers in the At Risk segment",
+      "What is RFM analysis?"
+    ],
+    technologies: ["Machine Learning", "RFM Analysis", "Churn Prediction", "LTV Modeling"],
+    businessValue: "Increases retention by 35% with targeted interventions",
+    architecture: [
+      { type: "llm", name: "Large Language Model", description: "GPT-4 for insight generation and recommendations" },
+      { type: "agent", name: "RFM Calculator", description: "Rule-based RFM scoring engine" },
+      { type: "agent", name: "ML Churn Model", description: "Gradient Boosting model for churn prediction" },
+      { type: "agent", name: "LTV Predictor", description: "Regression model for lifetime value estimation" },
+      { type: "data", name: "Transaction History", description: "Complete purchase history database" },
+      { type: "data", name: "Customer Profiles", description: "Demographics and preferences data" }
+    ],
+    sampleData: {
+      title: "Sample Customer Profiles",
+      description: "Pre-loaded customer behavior data with RFM scores and segments",
+      items: [
+        { id: "CUS-A001", name: "Alice Chan - Champion", details: "$12,500 spend, 45 orders, VIP tier" },
+        { id: "CUS-A002", name: "Bob Liu - Regular", details: "$890 spend, 8 orders, Standard tier" },
+        { id: "CUS-A003", name: "Carol Wong - Champion", details: "$45,000 spend, 120 orders, Platinum tier" },
+        { id: "CUS-A004", name: "David Ng - At Risk", details: "$250 spend, 3 orders, Inactive 90+ days" },
+        { id: "CUS-A005", name: "Emily Lam - Growing", details: "$3,200 spend, 15 orders, Rising engagement" },
+        { id: "CUS-A006", name: "Frank Ho - Declining", details: "$4,800 spend, 25 orders, Decreasing activity" }
+      ]
+    }
   }
 }
 
 function UseCaseDetail({ agent, onBack, onStartChat }) {
+  const [showSampleData, setShowSampleData] = useState(false)
+  
   const details = useCaseDetails[agent.id] || {
     title: agent.name,
     subtitle: agent.category,
@@ -471,6 +613,62 @@ function UseCaseDetail({ agent, onBack, onStartChat }) {
                 )
               })}
             </div>
+          </div>
+        )}
+
+        {/* Sample Data Section */}
+        {details.sampleData && (
+          <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-200 shadow-soft mb-6 animate-fade-in overflow-hidden" style={{ animationDelay: '280ms' }}>
+            <button
+              onClick={() => setShowSampleData(!showSampleData)}
+              className="w-full p-6 flex items-center justify-between hover:bg-amber-100/50 transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <Table className="w-5 h-5 text-amber-600" />
+                <h2 className="text-lg font-semibold text-surface-800">
+                  {details.sampleData.title}
+                </h2>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-amber-700 bg-amber-100 px-3 py-1 rounded-full">
+                  {details.sampleData.items.length} records
+                </span>
+                {showSampleData ? (
+                  <ChevronUp className="w-5 h-5 text-amber-600" />
+                ) : (
+                  <ChevronDown className="w-5 h-5 text-amber-600" />
+                )}
+              </div>
+            </button>
+            
+            {showSampleData && (
+              <div className="px-6 pb-6 border-t border-amber-200">
+                <p className="text-sm text-surface-500 mt-4 mb-4">
+                  {details.sampleData.description}
+                </p>
+                <div className="space-y-2">
+                  {details.sampleData.items.map((item, i) => (
+                    <div 
+                      key={i}
+                      className="flex items-center gap-3 p-3 bg-white rounded-xl border border-amber-100 hover:border-amber-300 transition-colors"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
+                        <span className="text-xs font-mono font-medium text-amber-700">
+                          {i + 1}
+                        </span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-sm text-surface-800">{item.name}</span>
+                          <span className="text-xs text-surface-400 font-mono">{item.id}</span>
+                        </div>
+                        <p className="text-xs text-surface-500 truncate">{item.details}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 

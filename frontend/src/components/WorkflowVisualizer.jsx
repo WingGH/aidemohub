@@ -156,6 +156,18 @@ export const AGENT_WORKFLOWS = {
     { id: 'gaps', label: 'Find Gaps', icon: 'alert', status: 'pending' },
     { id: 'report', label: 'Report', icon: 'complete', status: 'pending' },
   ],
+  voice_analytics: [
+    { id: 'receive', label: 'Receive Recording', icon: 'receive', status: 'pending' },
+    { id: 'transcribe', label: 'Transcribe Audio', icon: 'extract', status: 'pending' },
+    { id: 'sentiment', label: 'Analyze Sentiment', icon: 'search', status: 'pending' },
+    { id: 'insights', label: 'Generate Insights', icon: 'generate', status: 'pending' },
+  ],
+  customer_segmentation: [
+    { id: 'load', label: 'Load Data', icon: 'receive', status: 'pending' },
+    { id: 'rfm', label: 'Calculate RFM', icon: 'search', status: 'pending' },
+    { id: 'ml', label: 'ML Prediction', icon: 'generate', status: 'pending' },
+    { id: 'insights', label: 'Generate Insights', icon: 'complete', status: 'pending' },
+  ],
 }
 
 export default WorkflowVisualizer
