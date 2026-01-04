@@ -169,12 +169,12 @@ async def chat(request: ChatRequest):
     
     agent = agents[request.agent_id]
     
-    # Build message history
-    messages = request.conversation_history or []
-    messages.append({"role": "user", "content": request.message})
-    
-    # Run the agent
-    result = await agent.run(request.message, request.context or {})
+    # Run the agent with conversation history
+    result = await agent.run(
+        request.message, 
+        request.context or {},
+        request.conversation_history
+    )
     
     return ChatResponse(
         response=result["response"],
@@ -192,8 +192,8 @@ async def chat_stream(request: ChatRequest):
     
     agent = agents[request.agent_id]
     
-    # Build message history
-    messages = request.conversation_history or []
+    # Build full message history including current message
+    messages = list(request.conversation_history or [])
     messages.append({"role": "user", "content": request.message})
     
     async def generate():
@@ -230,17 +230,26 @@ async def chat_workflow_stream(request: ChatRequest):
         raise HTTPException(status_code=404, detail=f"Agent '{request.agent_id}' not found")
     
     agent = agents[request.agent_id]
+    conversation_history = request.conversation_history
     
     async def generate():
         """Generate streaming response with workflow updates."""
         try:
             # Check if agent supports streaming workflow
             if hasattr(agent, 'run_with_streaming'):
-                async for event in agent.run_with_streaming(request.message, request.context or {}):
+                async for event in agent.run_with_streaming(
+                    request.message, 
+                    request.context or {},
+                    conversation_history
+                ):
                     yield f"data: {json.dumps(event)}\n\n"
             else:
-                # Fall back to regular run
-                result = await agent.run(request.message, request.context or {})
+                # Fall back to regular run with conversation history
+                result = await agent.run(
+                    request.message, 
+                    request.context or {},
+                    conversation_history
+                )
                 
                 # Send workflow steps one by one with delay simulation
                 if result.get("workflow_steps"):
@@ -270,7 +279,8 @@ async def chat_workflow_stream(request: ChatRequest):
 async def chat_with_image(
     agent_id: str = Form(...),
     message: str = Form(...),
-    image: UploadFile = File(...)
+    image: UploadFile = File(...),
+    conversation_history: Optional[str] = Form(None)
 ):
     """Chat with an agent including an image."""
     if agent_id not in agents:
@@ -280,11 +290,19 @@ async def chat_with_image(
     image_content = await image.read()
     image_base64 = base64.b64encode(image_content).decode("utf-8")
     
+    # Parse conversation history from JSON string
+    history = None
+    if conversation_history:
+        try:
+            history = json.loads(conversation_history)
+        except json.JSONDecodeError:
+            history = None
+    
     agent = agents[agent_id]
     
-    # Run agent with image context
+    # Run agent with image context and conversation history
     context = {"image_base64": image_base64, "mime_type": image.content_type}
-    result = await agent.run(message, context)
+    result = await agent.run(message, context, history)
     
     return {
         "response": result["response"],
@@ -298,7 +316,8 @@ async def chat_with_image(
 async def chat_with_image_stream(
     agent_id: str = Form(...),
     message: str = Form(...),
-    image: UploadFile = File(...)
+    image: UploadFile = File(...),
+    conversation_history: Optional[str] = Form(None)
 ):
     """Chat with an agent including an image, with streaming workflow updates."""
     if agent_id not in agents:
@@ -308,17 +327,25 @@ async def chat_with_image_stream(
     image_content = await image.read()
     image_base64 = base64.b64encode(image_content).decode("utf-8")
     
+    # Parse conversation history from JSON string
+    history = None
+    if conversation_history:
+        try:
+            history = json.loads(conversation_history)
+        except json.JSONDecodeError:
+            history = None
+    
     agent = agents[agent_id]
     context = {"image_base64": image_base64, "mime_type": image.content_type}
     
     async def generate():
         try:
             if hasattr(agent, 'run_with_streaming'):
-                async for event in agent.run_with_streaming(message, context):
+                async for event in agent.run_with_streaming(message, context, history):
                     yield f"data: {json.dumps(event)}\n\n"
             else:
-                # Fallback to regular run
-                result = await agent.run(message, context)
+                # Fallback to regular run with conversation history
+                result = await agent.run(message, context, history)
                 if result.get("workflow_steps"):
                     for step in result["workflow_steps"]:
                         yield f"data: {json.dumps({'type': 'workflow_step', 'step': step})}\n\n"

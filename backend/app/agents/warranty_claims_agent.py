@@ -309,10 +309,17 @@ Known serial numbers in our system:
         
         return workflow
     
-    async def run(self, user_input: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
+    async def run(
+        self, 
+        user_input: str, 
+        context: Dict[str, Any] = None,
+        conversation_history: List[Dict[str, str]] = None
+    ) -> Dict[str, Any]:
         """Run the warranty claims workflow."""
+        messages = self._build_messages_with_history(user_input, conversation_history)
+        
         initial_state: WarrantyState = {
-            "messages": [{"role": "user", "content": user_input}],
+            "messages": messages,
             "context": context or {},
             "current_step": "start",
             "claim_id": None,
@@ -335,17 +342,25 @@ Known serial numbers in our system:
             "workflow_steps": final_state.get("workflow_steps", [])
         }
     
-    async def run_with_streaming(self, user_input: str, context: Dict[str, Any] = None):
+    async def run_with_streaming(
+        self, 
+        user_input: str, 
+        context: Dict[str, Any] = None,
+        conversation_history: List[Dict[str, str]] = None
+    ):
         """Run the warranty claims workflow with streaming step updates."""
         import re
         
         user_message = user_input.lower()
         claim_keywords = ["claim", "warranty", "serial", "sn-", "process", "broken", "defect", "return"]
         
+        # Build full messages list for LLM calls
+        messages = self._build_messages_with_history(user_input, conversation_history)
+        
         # Check if this is a claim or general query
         if not any(kw in user_message for kw in claim_keywords):
             response = await self.llm_service.chat(
-                [{"role": "user", "content": user_input}],
+                messages,
                 self.get_system_prompt()
             )
             yield {"type": "response", "content": response}

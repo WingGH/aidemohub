@@ -113,9 +113,17 @@ Please provide:
         
         return workflow
     
-    async def run_with_streaming(self, user_input: str, context: Dict[str, Any] = None):
+    async def run_with_streaming(
+        self, 
+        user_input: str, 
+        context: Dict[str, Any] = None,
+        conversation_history: List[Dict[str, str]] = None
+    ):
         """Run marketing content generation with streaming step updates."""
         workflow_steps = []
+        
+        # Build full messages list for LLM calls
+        messages = self._build_messages_with_history(user_input, conversation_history)
         
         # Step 1: Analyze Brief
         step1 = {"step": "brief", "status": "active", "label": "Analyze Brief"}
@@ -146,8 +154,9 @@ Please provide:
         workflow_steps.append(step2)
         yield {"type": "workflow_step", "step": step2, "all_steps": workflow_steps.copy()}
         
+        # Use full conversation history for better context
         response = await self.llm_service.chat(
-            [{"role": "user", "content": user_input}],
+            messages,
             self.get_system_prompt()
         )
         await asyncio.sleep(STEP_DELAY)

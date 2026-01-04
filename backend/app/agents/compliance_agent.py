@@ -126,11 +126,19 @@ Format each action item as:
         
         return workflow
     
-    async def run_with_streaming(self, user_input: str, context: Dict[str, Any] = None):
+    async def run_with_streaming(
+        self, 
+        user_input: str, 
+        context: Dict[str, Any] = None,
+        conversation_history: List[Dict[str, str]] = None
+    ):
         """Run compliance analysis with streaming step updates."""
         ctx = context or {}
         workflow_steps = []
         has_document = ctx.get("image_base64") or ctx.get("document_text")
+        
+        # Build full messages list for LLM calls
+        messages = self._build_messages_with_history(user_input, conversation_history)
         
         if not has_document:
             # General query - still show workflow steps
@@ -157,9 +165,9 @@ Format each action item as:
             workflow_steps.append(step3)
             yield {"type": "workflow_step", "step": step3, "all_steps": workflow_steps.copy()}
             
-            # Generate response
+            # Generate response with full conversation history
             response = await self.llm_service.chat(
-                [{"role": "user", "content": user_input}],
+                messages,
                 self.get_system_prompt()
             )
             

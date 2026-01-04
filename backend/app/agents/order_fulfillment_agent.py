@@ -293,10 +293,17 @@ Respond with a summary of each step taken and the final order status."""
         
         return workflow
     
-    async def run(self, user_input: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
+    async def run(
+        self, 
+        user_input: str, 
+        context: Dict[str, Any] = None,
+        conversation_history: List[Dict[str, str]] = None
+    ) -> Dict[str, Any]:
         """Run the fulfillment workflow."""
+        messages = self._build_messages_with_history(user_input, conversation_history)
+        
         initial_state: FulfillmentState = {
-            "messages": [{"role": "user", "content": user_input}],
+            "messages": messages,
             "context": context or {},
             "current_step": "start",
             "order_id": None,
@@ -319,11 +326,19 @@ Respond with a summary of each step taken and the final order status."""
             "workflow_steps": final_state.get("workflow_steps", [])
         }
     
-    async def run_with_streaming(self, user_input: str, context: Dict[str, Any] = None):
+    async def run_with_streaming(
+        self, 
+        user_input: str, 
+        context: Dict[str, Any] = None,
+        conversation_history: List[Dict[str, str]] = None
+    ):
         """Run the fulfillment workflow with streaming step updates and human-in-the-loop."""
         
         user_message = user_input.lower()
         ctx = context or {}
+        
+        # Build full messages list for LLM calls
+        messages = self._build_messages_with_history(user_input, conversation_history)
         
         # Check if this is an approval response
         if ctx.get("approval_id"):
@@ -335,9 +350,9 @@ Respond with a summary of each step taken and the final order status."""
         
         # Check if this is an order or general query
         if not any(kw in user_message for kw in order_keywords):
-            # General query - just use LLM
+            # General query - use LLM with full conversation history
             response = await self.llm_service.chat(
-                [{"role": "user", "content": user_input}],
+                messages,
                 self.get_system_prompt()
             )
             yield {"type": "response", "content": response}

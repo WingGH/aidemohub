@@ -112,18 +112,26 @@ If text is in Chinese or other languages, translate key fields to English while 
         
         return workflow
     
-    async def run_with_streaming(self, user_input: str, context: Dict[str, Any] = None):
+    async def run_with_streaming(
+        self, 
+        user_input: str, 
+        context: Dict[str, Any] = None,
+        conversation_history: List[Dict[str, str]] = None
+    ):
         """Run the document processing workflow with streaming step updates."""
         ctx = context or {}
         workflow_steps = []
+        
+        # Build full messages list for LLM calls
+        messages = self._build_messages_with_history(user_input, conversation_history)
         
         # Check if we have an image to process
         has_image = ctx.get("image_base64") is not None
         
         if not has_image:
-            # General query - just use LLM
+            # General query - use LLM with full conversation history
             response = await self.llm_service.chat(
-                [{"role": "user", "content": user_input}],
+                messages,
                 self.get_system_prompt()
             )
             yield {"type": "response", "content": response}

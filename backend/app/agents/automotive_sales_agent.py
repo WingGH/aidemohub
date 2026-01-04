@@ -64,6 +64,7 @@ Guidelines:
         
         async def understand_intent(state: AutomotiveState) -> AutomotiveState:
             """Step 1: Understand customer intent."""
+            import re
             state["workflow_steps"].append({
                 "step": "understand",
                 "status": "active",
@@ -72,13 +73,16 @@ Guidelines:
             
             user_message = state["messages"][-1]["content"].lower()
             
+            # Check for price/budget queries which imply vehicle search
+            has_price_query = bool(re.search(r'\$?\d{2,6}', user_message))
+            
             if any(word in user_message for word in ["test drive", "schedule", "try"]):
                 state["intent"] = "test_drive"
             elif any(word in user_message for word in ["finance", "payment", "loan", "monthly"]):
                 state["intent"] = "financing"
             elif any(word in user_message for word in ["service", "repair", "maintenance", "brake", "oil"]):
                 state["intent"] = "service"
-            elif any(word in user_message for word in ["show", "available", "looking", "want", "find", "under"]):
+            elif any(word in user_message for word in ["show", "available", "looking", "want", "find", "under", "below", "cheaper", "less", "budget", "price", "cost"]) or has_price_query:
                 state["intent"] = "search"
             else:
                 state["intent"] = "inquiry"
@@ -100,10 +104,10 @@ Guidelines:
             
             user_message = state["messages"][-1]["content"].lower()
             
-            # Parse price limit
+            # Parse price limit - look for price numbers with keywords like under, below, less
             max_price = None
-            if "under" in user_message:
-                import re
+            import re
+            if any(word in user_message for word in ["under", "below", "less", "cheaper", "budget"]):
                 prices = re.findall(r'\$?([\d,]+)', user_message)
                 if prices:
                     max_price = float(prices[0].replace(',', ''))
@@ -353,10 +357,17 @@ Guidelines:
         
         return workflow
     
-    async def run(self, user_input: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
+    async def run(
+        self, 
+        user_input: str, 
+        context: Dict[str, Any] = None,
+        conversation_history: List[Dict[str, str]] = None
+    ) -> Dict[str, Any]:
         """Run the automotive sales workflow."""
+        messages = self._build_messages_with_history(user_input, conversation_history)
+        
         initial_state: AutomotiveState = {
-            "messages": [{"role": "user", "content": user_input}],
+            "messages": messages,
             "context": context or {},
             "current_step": "start",
             "intent": None,
@@ -378,26 +389,37 @@ Guidelines:
             "workflow_steps": final_state.get("workflow_steps", [])
         }
     
-    async def run_with_streaming(self, user_input: str, context: Dict[str, Any] = None):
+    async def run_with_streaming(
+        self, 
+        user_input: str, 
+        context: Dict[str, Any] = None,
+        conversation_history: List[Dict[str, str]] = None
+    ):
         """Run the automotive sales workflow with streaming step updates."""
         import re
         
         user_message = user_input.lower()
         workflow_steps = []
         
+        # Build full messages list for LLM calls
+        messages = self._build_messages_with_history(user_input, conversation_history)
+        
         # Step 1: Understand Intent
         step1 = {"step": "understand", "status": "active", "label": "Understanding Request"}
         workflow_steps.append(step1)
         yield {"type": "workflow_step", "step": step1, "all_steps": workflow_steps.copy()}
         
-        # Determine intent
+        # Determine intent - check for price/budget related queries which imply vehicle search
+        # Also check conversation history for context
+        has_price_query = bool(re.search(r'\$?\d{2,6}', user_message))  # Contains a price number
+        
         if any(word in user_message for word in ["test drive", "schedule", "try"]):
             intent = "test_drive"
         elif any(word in user_message for word in ["finance", "payment", "loan", "monthly"]):
             intent = "financing"
         elif any(word in user_message for word in ["service", "repair", "maintenance", "brake", "oil"]):
             intent = "service"
-        elif any(word in user_message for word in ["show", "available", "looking", "want", "find", "under"]):
+        elif any(word in user_message for word in ["show", "available", "looking", "want", "find", "under", "below", "cheaper", "less", "budget", "price", "cost"]) or has_price_query:
             intent = "search"
         else:
             intent = "inquiry"
@@ -416,7 +438,7 @@ Guidelines:
             yield {"type": "workflow_step", "step": step2, "all_steps": workflow_steps.copy()}
             
             max_price = None
-            if "under" in user_message:
+            if any(word in user_message for word in ["under", "below", "less", "cheaper", "budget"]):
                 prices = re.findall(r'\$?([\d,]+)', user_message)
                 if prices:
                     max_price = float(prices[0].replace(',', ''))
@@ -575,9 +597,9 @@ Guidelines:
             yield {"type": "response", "content": "\n".join(response_parts)}
             
         else:
-            # General inquiry - use LLM
+            # General inquiry - use LLM with full conversation history
             response = await self.llm_service.chat(
-                [{"role": "user", "content": user_input}],
+                messages,
                 self.get_system_prompt()
             )
             yield {"type": "response", "content": response}

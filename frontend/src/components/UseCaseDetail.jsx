@@ -6,8 +6,28 @@ import {
   FileText, 
   Zap,
   CheckCircle2,
-  PlayCircle
+  PlayCircle,
+  Server,
+  Database,
+  Cpu,
+  Layers,
+  Cloud,
+  Eye,
+  Brain,
+  GitBranch
 } from 'lucide-react'
+
+// Architecture component icons
+const architectureIcons = {
+  llm: Brain,
+  vectordb: Database,
+  agent: GitBranch,
+  data: Layers,
+  vision: Eye,
+  api: Cloud,
+  compute: Cpu,
+  server: Server
+}
 
 // Detailed descriptions for each use case
 const useCaseDetails = {
@@ -30,7 +50,15 @@ const useCaseDetails = {
       "I need to book a brake service for my Toyota Camry"
     ],
     technologies: ["Agentic AI", "Tool Use", "Multi-step Reasoning", "CRM Integration"],
-    businessValue: "Reduces sales cycle time by 40% and enables 24/7 customer engagement"
+    businessValue: "Reduces sales cycle time by 40% and enables 24/7 customer engagement",
+    architecture: [
+      { type: "llm", name: "Large Language Model", description: "GPT-4 / Claude for intent understanding and response generation" },
+      { type: "agent", name: "Agent Framework", description: "LangGraph for multi-step workflow orchestration" },
+      { type: "data", name: "Vehicle Inventory DB", description: "Real-time vehicle database with pricing and availability" },
+      { type: "data", name: "CRM System", description: "Customer profiles, preferences, and interaction history" },
+      { type: "api", name: "Scheduling API", description: "Calendar integration for test drives and service booking" },
+      { type: "api", name: "Financing Calculator", description: "Loan/lease calculation service with rate APIs" }
+    ]
   },
   damage_assessment: {
     title: "Vehicle Damage Assessment",
@@ -51,7 +79,14 @@ const useCaseDetails = {
       "Is this damage worth an insurance claim?"
     ],
     technologies: ["Vision AI", "Multimodal Models", "Real-time Analysis"],
-    businessValue: "Increases service efficiency and speeds up insurance claim processing by 60%"
+    businessValue: "Increases service efficiency and speeds up insurance claim processing by 60%",
+    architecture: [
+      { type: "llm", name: "Vision Language Model", description: "GPT-4V / Claude Vision for image understanding" },
+      { type: "vision", name: "Image Processing", description: "Pre-processing for damage detection and localization" },
+      { type: "data", name: "Parts & Pricing DB", description: "Vehicle parts catalog with repair cost estimates" },
+      { type: "vectordb", name: "Damage Examples DB", description: "Vector store of historical damage cases for comparison" },
+      { type: "api", name: "Insurance Integration", description: "Claims submission and threshold verification" }
+    ]
   },
   document_processing: {
     title: "Intelligent Document Processing",
@@ -72,7 +107,14 @@ const useCaseDetails = {
       "Can you process documents in Chinese?"
     ],
     technologies: ["Document AI", "OCR", "NLP", "Multilingual Processing"],
-    businessValue: "Reduces manual data entry by 80% and processing errors by 95%"
+    businessValue: "Reduces manual data entry by 80% and processing errors by 95%",
+    architecture: [
+      { type: "llm", name: "Vision Language Model", description: "GPT-4V for document understanding and field extraction" },
+      { type: "vision", name: "OCR Engine", description: "Multilingual OCR for text extraction (EN/CN/handwritten)" },
+      { type: "agent", name: "Document Classifier", description: "Auto-detect document type (invoice, BOL, customs)" },
+      { type: "data", name: "Document Templates", description: "Schema definitions for different document types" },
+      { type: "api", name: "ERP Integration", description: "Push extracted data to enterprise systems" }
+    ]
   },
   marketing_content: {
     title: "Marketing Content Studio",
@@ -93,7 +135,15 @@ const useCaseDetails = {
       "Create WeChat content for Korean food products in Hong Kong"
     ],
     technologies: ["Generative AI", "Content Generation", "Localization", "Multi-platform"],
-    businessValue: "Reduces content creation time by 70% while maintaining brand consistency"
+    businessValue: "Reduces content creation time by 70% while maintaining brand consistency",
+    architecture: [
+      { type: "llm", name: "Large Language Model", description: "GPT-4 / Claude for creative content generation" },
+      { type: "agent", name: "Content Workflow", description: "LangGraph for multi-step content creation pipeline" },
+      { type: "vectordb", name: "Brand Guidelines DB", description: "Vector store of brand voice, style guides, examples" },
+      { type: "data", name: "Campaign Templates", description: "Pre-defined templates for different platforms" },
+      { type: "api", name: "Image Generation", description: "DALL-E / Stable Diffusion for visual suggestions" },
+      { type: "api", name: "Translation Service", description: "Multilingual localization (EN/CN/etc.)" }
+    ]
   },
   compliance: {
     title: "Compliance Copilot",
@@ -114,7 +164,15 @@ const useCaseDetails = {
       "Generate action items for the new import requirements"
     ],
     technologies: ["NLP", "Document Understanding", "Risk Assessment"],
-    businessValue: "Reduces compliance review time by 50% and regulatory risk exposure"
+    businessValue: "Reduces compliance review time by 50% and regulatory risk exposure",
+    architecture: [
+      { type: "llm", name: "Large Language Model", description: "GPT-4 / Claude for regulatory document analysis" },
+      { type: "vectordb", name: "SOP Knowledge Base", description: "Vector DB of internal SOPs and procedures (RAG)" },
+      { type: "vectordb", name: "Regulations DB", description: "Indexed regulatory documents for semantic search" },
+      { type: "agent", name: "Gap Analysis Engine", description: "LangGraph workflow for comparison and gap detection" },
+      { type: "vision", name: "PDF Parser", description: "Document extraction from regulatory PDFs" },
+      { type: "data", name: "Risk Scoring Model", description: "Priority classification for compliance gaps" }
+    ]
   },
   sales_trainer: {
     title: "Role-Play Sales Trainer",
@@ -135,7 +193,14 @@ const useCaseDetails = {
       "I want to practice competitor comparison scenarios"
     ],
     technologies: ["Conversational AI", "Role-play Simulation", "Performance Analytics"],
-    businessValue: "Scalable upskilling that reduces manager training time by 60%"
+    businessValue: "Scalable upskilling that reduces manager training time by 60%",
+    architecture: [
+      { type: "llm", name: "Large Language Model", description: "GPT-4 / Claude for realistic customer role-play" },
+      { type: "data", name: "Scenario Library", description: "Pre-defined training scenarios and personas" },
+      { type: "agent", name: "Conversation Manager", description: "State tracking for multi-turn role-play sessions" },
+      { type: "llm", name: "Evaluation Model", description: "LLM-as-judge for performance scoring" },
+      { type: "data", name: "Scoring Rubrics", description: "Criteria for sales skill assessment" }
+    ]
   },
   trend_spotter: {
     title: "Social Sentiment & Trend Spotter",
@@ -156,7 +221,15 @@ const useCaseDetails = {
       "Find suppliers for trending organic products"
     ],
     technologies: ["Social Listening", "Sentiment Analysis", "Market Intelligence"],
-    businessValue: "Keeps FMCG portfolio relevant with data-driven trend insights"
+    businessValue: "Keeps FMCG portfolio relevant with data-driven trend insights",
+    architecture: [
+      { type: "llm", name: "Large Language Model", description: "GPT-4 for trend analysis and insights generation" },
+      { type: "api", name: "Social Media APIs", description: "Instagram, TikTok, Xiaohongshu data feeds" },
+      { type: "data", name: "Trend Database", description: "Historical trend data with growth metrics" },
+      { type: "data", name: "Supplier Directory", description: "Supplier catalog matched to product categories" },
+      { type: "agent", name: "Sentiment Analyzer", description: "NLP pipeline for sentiment classification" },
+      { type: "vectordb", name: "Product Embeddings", description: "Vector matching for trend-to-supplier recommendations" }
+    ]
   },
   warranty_claims: {
     title: "Warranty Claims Processing",
@@ -177,7 +250,15 @@ const useCaseDetails = {
       "Upload receipt for claim processing"
     ],
     technologies: ["OCR", "Fraud Detection AI", "Automation"],
-    businessValue: "Streamlines after-sales service with 85% auto-approval rate"
+    businessValue: "Streamlines after-sales service with 85% auto-approval rate",
+    architecture: [
+      { type: "llm", name: "Vision Language Model", description: "GPT-4V for receipt OCR and data extraction" },
+      { type: "agent", name: "Claims Workflow", description: "LangGraph for multi-step claim processing" },
+      { type: "data", name: "Warranty Database", description: "Product registrations with warranty periods" },
+      { type: "data", name: "Claims History", description: "Past claims for duplicate detection" },
+      { type: "agent", name: "Fraud Detection Model", description: "Rule-based + ML scoring for fraud indicators" },
+      { type: "api", name: "CRM Integration", description: "Customer notification and case management" }
+    ]
   },
   cross_selling: {
     title: "Cross-Selling Intelligence",
@@ -198,7 +279,15 @@ const useCaseDetails = {
       "What should I cross-sell with frozen dumplings?"
     ],
     technologies: ["Recommendation AI", "Pricing Optimization", "Sales Enablement"],
-    businessValue: "Increases average order value by 25% with smart bundling"
+    businessValue: "Increases average order value by 25% with smart bundling",
+    architecture: [
+      { type: "llm", name: "Large Language Model", description: "GPT-4 for sales pitch generation" },
+      { type: "vectordb", name: "Product Embeddings", description: "Vector DB for product similarity matching" },
+      { type: "data", name: "Purchase History", description: "Customer transaction data for pattern analysis" },
+      { type: "data", name: "Product Catalog", description: "SKU database with pricing and categories" },
+      { type: "agent", name: "Bundle Optimizer", description: "Pricing rules for discount calculations" },
+      { type: "data", name: "Association Rules", description: "Frequently-bought-together patterns" }
+    ]
   },
   order_fulfillment: {
     title: "Order Fulfillment Agent",
@@ -219,7 +308,15 @@ const useCaseDetails = {
       "What's the delivery estimate for Hong Kong Central?"
     ],
     technologies: ["Agentic AI", "Warehouse Management", "Route Optimization"],
-    businessValue: "Enhances logistics efficiency with 30% faster order processing"
+    businessValue: "Enhances logistics efficiency with 30% faster order processing",
+    architecture: [
+      { type: "llm", name: "Large Language Model", description: "GPT-4 for order parsing and response generation" },
+      { type: "agent", name: "Agent Framework", description: "LangGraph for multi-step fulfillment workflow" },
+      { type: "data", name: "Inventory System", description: "Real-time stock levels across warehouses" },
+      { type: "data", name: "Warehouse Layout", description: "Zone mapping for pick route optimization" },
+      { type: "api", name: "Carrier APIs", description: "Shipping rate and tracking integrations" },
+      { type: "agent", name: "Human-in-the-Loop", description: "Approval workflow for high-value orders" }
+    ]
   }
 }
 
@@ -321,6 +418,61 @@ function UseCaseDetail({ agent, onBack, onStartChat }) {
             ))}
           </div>
         </div>
+
+        {/* Architecture Requirements */}
+        {details.architecture && details.architecture.length > 0 && (
+          <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-6 border border-slate-200 shadow-soft mb-6 animate-fade-in" style={{ animationDelay: '250ms' }}>
+            <h2 className="text-lg font-semibold text-surface-800 mb-4 flex items-center gap-2">
+              <Server className="w-5 h-5 text-purple-600" />
+              Architecture Requirements
+            </h2>
+            <p className="text-sm text-surface-500 mb-4">
+              Key components needed to build this use case:
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {details.architecture.map((component, i) => {
+                const IconComponent = architectureIcons[component.type] || Server
+                const colorClasses = {
+                  llm: 'bg-blue-50 border-blue-200 text-blue-700',
+                  vectordb: 'bg-purple-50 border-purple-200 text-purple-700',
+                  agent: 'bg-green-50 border-green-200 text-green-700',
+                  data: 'bg-amber-50 border-amber-200 text-amber-700',
+                  vision: 'bg-pink-50 border-pink-200 text-pink-700',
+                  api: 'bg-cyan-50 border-cyan-200 text-cyan-700',
+                  compute: 'bg-red-50 border-red-200 text-red-700',
+                  server: 'bg-slate-50 border-slate-200 text-slate-700'
+                }
+                const colorClass = colorClasses[component.type] || colorClasses.server
+                const iconColors = {
+                  llm: 'text-blue-600',
+                  vectordb: 'text-purple-600',
+                  agent: 'text-green-600',
+                  data: 'text-amber-600',
+                  vision: 'text-pink-600',
+                  api: 'text-cyan-600',
+                  compute: 'text-red-600',
+                  server: 'text-slate-600'
+                }
+                const iconColor = iconColors[component.type] || iconColors.server
+                
+                return (
+                  <div 
+                    key={i} 
+                    className={`flex items-start gap-3 p-3 rounded-xl border ${colorClass} transition-all hover:shadow-md`}
+                  >
+                    <div className={`w-8 h-8 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm`}>
+                      <IconComponent className={`w-4 h-4 ${iconColor}`} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-medium text-sm text-surface-800 truncate">{component.name}</h4>
+                      <p className="text-xs text-surface-500 leading-relaxed">{component.description}</p>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Try These Prompts */}
         <div className="bg-white rounded-2xl p-6 border border-surface-200 shadow-soft mb-6 animate-fade-in" style={{ animationDelay: '300ms' }}>

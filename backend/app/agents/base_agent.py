@@ -44,10 +44,29 @@ class BaseAgent(ABC):
         """Get the system prompt for this agent."""
         pass
     
-    async def run(self, user_input: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-        """Run the agent with user input."""
+    def _build_messages_with_history(
+        self, 
+        user_input: str, 
+        conversation_history: Optional[List[Dict[str, str]]] = None
+    ) -> List[Dict[str, str]]:
+        """Build messages list including conversation history."""
+        messages = []
+        if conversation_history:
+            messages.extend(conversation_history)
+        messages.append({"role": "user", "content": user_input})
+        return messages
+    
+    async def run(
+        self, 
+        user_input: str, 
+        context: Optional[Dict[str, Any]] = None,
+        conversation_history: Optional[List[Dict[str, str]]] = None
+    ) -> Dict[str, Any]:
+        """Run the agent with user input and optional conversation history."""
+        messages = self._build_messages_with_history(user_input, conversation_history)
+        
         initial_state: AgentState = {
-            "messages": [{"role": "user", "content": user_input}],
+            "messages": messages,
             "context": context or {},
             "current_step": "start",
             "result": None

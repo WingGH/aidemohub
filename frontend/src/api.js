@@ -77,11 +77,14 @@ export async function sendMessageStream(agentId, message, context = null, conver
   }
 }
 
-export async function sendMessageWithImage(agentId, message, imageFile) {
+export async function sendMessageWithImage(agentId, message, imageFile, conversationHistory = null) {
   const formData = new FormData()
   formData.append('agent_id', agentId)
   formData.append('message', message)
   formData.append('image', imageFile)
+  if (conversationHistory) {
+    formData.append('conversation_history', JSON.stringify(conversationHistory))
+  }
 
   const response = await fetch(`${API_BASE}/chat-with-image`, {
     method: 'POST',
@@ -92,11 +95,14 @@ export async function sendMessageWithImage(agentId, message, imageFile) {
   return response.json()
 }
 
-export async function sendMessageWithImageStream(agentId, message, imageFile, onStepUpdate, onResponse) {
+export async function sendMessageWithImageStream(agentId, message, imageFile, onStepUpdate, onResponse, conversationHistory = null) {
   const formData = new FormData()
   formData.append('agent_id', agentId)
   formData.append('message', message)
   formData.append('image', imageFile)
+  if (conversationHistory) {
+    formData.append('conversation_history', JSON.stringify(conversationHistory))
+  }
 
   const response = await fetch(`${API_BASE}/chat-with-image/stream`, {
     method: 'POST',
@@ -149,7 +155,7 @@ export async function sendMessageWithImageStream(agentId, message, imageFile, on
   }
 }
 
-export async function sendMessageWithWorkflowStream(agentId, message, context = null, onStepUpdate, onResponse, onApprovalRequired = null) {
+export async function sendMessageWithWorkflowStream(agentId, message, context = null, onStepUpdate, onResponse, onApprovalRequired = null, conversationHistory = null) {
   const response = await fetch(`${API_BASE}/chat/workflow-stream`, {
     method: 'POST',
     headers: {
@@ -159,6 +165,7 @@ export async function sendMessageWithWorkflowStream(agentId, message, context = 
       agent_id: agentId,
       message,
       context,
+      conversation_history: conversationHistory,
     }),
   })
   

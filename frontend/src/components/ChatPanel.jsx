@@ -191,19 +191,20 @@ function ChatPanel({ agent, messages, onNewMessage, onClearConversation, onBackT
     setIsLoading(true)
     setShowPromotions(false)
 
-    // Show pending workflow for agentic agents
-    if (WORKFLOW_AGENTS.includes(agent.id)) {
-      const workflow = AGENT_WORKFLOWS[agent.id] || []
-      setWorkflowSteps(workflow.map((s, idx) => ({
-        ...s,
-        status: 'pending'
-      })))
-    }
+    // Clear workflow steps at start - let backend drive the workflow visualization
+    // This fixes the issue where follow-up queries show stuck "pending" steps
+    setWorkflowSteps([])
 
     try {
       let response
       if (imageFile && WORKFLOW_AGENTS.includes(agent.id)) {
         // Use streaming for image uploads with workflow agents
+        // Build conversation history for context
+        const conversationHistory = messages.map(m => ({
+          role: m.role,
+          content: m.content
+        }))
+        
         await sendMessageWithImageStream(
           agent.id,
           currentInput || 'Analyze this image',
@@ -219,15 +220,26 @@ function ChatPanel({ agent, messages, onNewMessage, onClearConversation, onBackT
           (content) => {
             const assistantMessage = { role: 'assistant', content }
             onNewMessage([...newMessages, assistantMessage])
-          }
+          },
+          conversationHistory
         )
       } else if (imageFile) {
         // Non-workflow agents with images
-        response = await sendMessageWithImage(agent.id, currentInput || 'Analyze this image', imageFile)
+        const conversationHistory = messages.map(m => ({
+          role: m.role,
+          content: m.content
+        }))
+        response = await sendMessageWithImage(agent.id, currentInput || 'Analyze this image', imageFile, conversationHistory)
         const assistantMessage = { role: 'assistant', content: response.response }
         onNewMessage([...newMessages, assistantMessage])
       } else if (WORKFLOW_AGENTS.includes(agent.id)) {
         // Use streaming workflow for agentic agents
+        // Build conversation history for context
+        const conversationHistory = messages.map(m => ({
+          role: m.role,
+          content: m.content
+        }))
+        
         await sendMessageWithWorkflowStream(
           agent.id,
           currentInput,
@@ -250,7 +262,9 @@ function ChatPanel({ agent, messages, onNewMessage, onClearConversation, onBackT
           (approvalData) => {
             setPendingApproval(approvalData)
             setIsLoading(false)
-          }
+          },
+          // Pass conversation history for multi-turn context
+          conversationHistory
         )
       } else {
         // Regular non-workflow agents
