@@ -36,31 +36,33 @@ const architectureIcons = {
 const useCaseDetails = {
   automotive_sales: {
     title: "Automotive Sales & Service Agent",
-    subtitle: "End-to-end customer journey automation",
-    description: "An autonomous AI agent that handles the complete customer journey—from initial inquiry, test drive scheduling, financing options, to after-sales service booking. It can access multiple systems, make decisions, and complete multi-step tasks without human intervention.",
+    subtitle: "Multi-Agent System with Supervisor Pattern",
+    description: "A **multi-agent AI system** where a Supervisor Agent coordinates specialized agents: Intent Analyzer, Inventory Specialist, Finance Specialist, Service Advisor, and Test Drive Coordinator. Each agent has its own LLM and responsibilities, demonstrating true agent-to-agent collaboration.",
     howItWorks: [
-      "Customer initiates conversation with a vehicle inquiry",
-      "AI identifies customer needs and preferences",
-      "Presents matching vehicles from inventory with pricing",
-      "Offers to schedule test drives with available slots",
-      "Discusses financing options and calculates payments",
-      "Books service appointments for existing customers"
+      "🎯 **Supervisor Agent** receives customer query and routes to specialists",
+      "🧠 **Intent Analyzer Agent** uses LLM to classify customer intent",
+      "🚗 **Inventory Specialist Agent** searches vehicles and provides recommendations",
+      "💰 **Finance Specialist Agent** calculates options and gives financial advice",
+      "🔧 **Service Advisor Agent** handles maintenance and repair requests",
+      "🎯 **Test Drive Coordinator Agent** schedules test drives"
     ],
     tryPrompts: [
-      "Show me available vehicles under $50,000",
+      "Show me available vehicles under $35,000",
       "I want to schedule a test drive for the BMW 3 Series",
       "What financing options do you offer for a 5-year term?",
       "I need to book a brake service for my Toyota Camry"
     ],
-    technologies: ["Agentic AI", "Tool Use", "Multi-step Reasoning", "CRM Integration"],
-    businessValue: "Reduces sales cycle time by 40% and enables 24/7 customer engagement",
+    technologies: ["Multi-Agent", "Supervisor Pattern", "LangGraph", "Tool Use", "Agent Handoffs"],
+    businessValue: "Reduces sales cycle time by 40% and enables 24/7 customer engagement with specialized expertise",
     architecture: [
-      { type: "llm", name: "Large Language Model", description: "GPT-4 / Claude for intent understanding and response generation" },
-      { type: "agent", name: "Agent Framework", description: "LangGraph for multi-step workflow orchestration" },
+      { type: "agent", name: "Supervisor Agent", description: "Routes requests to specialist agents, orchestrates workflow" },
+      { type: "agent", name: "Intent Analyzer Agent", description: "LLM-powered intent classification with context awareness" },
+      { type: "agent", name: "Inventory Specialist Agent", description: "Vehicle search, details, and personalized recommendations" },
+      { type: "agent", name: "Finance Specialist Agent", description: "Financing calculations with LLM-generated advice" },
+      { type: "agent", name: "Service Advisor Agent", description: "Service booking with maintenance recommendations" },
+      { type: "llm", name: "5x LLM Instances", description: "Each agent has independent LLM for specialized responses" },
       { type: "data", name: "Vehicle Inventory DB", description: "Real-time vehicle database with pricing and availability" },
-      { type: "data", name: "CRM System", description: "Customer profiles, preferences, and interaction history" },
-      { type: "api", name: "Scheduling API", description: "Calendar integration for test drives and service booking" },
-      { type: "api", name: "Financing Calculator", description: "Loan/lease calculation service with rate APIs" }
+      { type: "api", name: "Scheduling & Finance APIs", description: "Calendar integration and loan calculation services" }
     ],
     sampleData: {
       title: "Vehicle Inventory",
@@ -341,31 +343,33 @@ const useCaseDetails = {
   },
   order_fulfillment: {
     title: "Order Fulfillment Agent",
-    subtitle: "Agentic warehouse and logistics management",
-    description: "An AI agent that receives orders, checks stock across multiple warehouses, optimizes picking routes, allocates inventory from optimal locations, and coordinates deliveries with real-time updates.",
+    subtitle: "Multi-Agent Chain with Human-in-the-Loop",
+    description: "A **multi-agent chain system** where specialized agents process orders sequentially: Order Intake → Inventory → Human Approval → Warehouse → Shipping. Each agent processes and hands off to the next, with a human approval checkpoint for high-value orders.",
     howItWorks: [
-      "Receive order with item details",
-      "Check inventory across all warehouses",
-      "Optimize allocation from best locations",
-      "Generate picking list with route optimization",
-      "Coordinate with delivery carriers",
-      "Provide real-time status updates"
+      "📥 **Order Intake Agent** receives order, validates items, and logs to system",
+      "📦 **Inventory Agent** checks stock across warehouses and allocates optimally",
+      "👤 **Human Approval** manager reviews allocation before warehouse processing",
+      "🏭 **Warehouse Agent** generates optimized pick lists with route advice",
+      "🚚 **Shipping Agent** schedules delivery with carrier and tracking",
+      "Each agent adds insights and hands off state to the next in the chain"
     ],
     tryPrompts: [
       "Process an order for 100 units of Oat Milk",
-      "Check inventory for SKU001 across all warehouses",
+      "Ship 50 Korean Tteokbokki and 75 Green Tea",
       "How does the fulfillment workflow work?",
       "What's the delivery estimate for Hong Kong Central?"
     ],
-    technologies: ["Agentic AI", "Warehouse Management", "Route Optimization"],
-    businessValue: "Enhances logistics efficiency with 30% faster order processing",
+    technologies: ["Multi-Agent Chain", "Human-in-the-Loop", "LangGraph", "Agent Handoffs"],
+    businessValue: "Enhances logistics efficiency with 30% faster order processing and human oversight",
     architecture: [
-      { type: "llm", name: "Large Language Model", description: "GPT-4 for order parsing and response generation" },
-      { type: "agent", name: "Agent Framework", description: "LangGraph for multi-step fulfillment workflow" },
+      { type: "agent", name: "Order Intake Agent", description: "Validates orders, parses items, and LLM-checks for anomalies" },
+      { type: "agent", name: "Inventory Agent", description: "Multi-warehouse stock check with allocation optimization" },
+      { type: "agent", name: "Human-in-the-Loop", description: "Manager approval checkpoint before warehouse processing" },
+      { type: "agent", name: "Warehouse Agent", description: "Pick list generation with route optimization advice" },
+      { type: "agent", name: "Shipping Agent", description: "Carrier selection and delivery scheduling with insights" },
+      { type: "llm", name: "4x LLM Instances", description: "Each agent has LLM for specialized analysis and advice" },
       { type: "data", name: "Inventory System", description: "Real-time stock levels across warehouses" },
-      { type: "data", name: "Warehouse Layout", description: "Zone mapping for pick route optimization" },
-      { type: "api", name: "Carrier APIs", description: "Shipping rate and tracking integrations" },
-      { type: "agent", name: "Human-in-the-Loop", description: "Approval workflow for high-value orders" }
+      { type: "api", name: "Carrier APIs", description: "Shipping rate and tracking integrations" }
     ],
     sampleData: {
       title: "Warehouse Inventory",
