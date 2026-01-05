@@ -249,16 +249,15 @@ cd /home/ubuntu/aihub/frontend
 # Install dependencies
 npm install
 
-# Update API URL for production
-nano src/api.js
-# Change: const API_BASE_URL = 'http://<EC2-PUBLIC-IP>:8000'
-
 # Build for production
+# Note: API_BASE is already set to '/api' which works with nginx proxy
 npm run build
 
 # Copy build to nginx
 sudo cp -r dist/* /var/www/html/
 ```
+
+> **Note**: The frontend uses `const API_BASE = '/api'` in `src/api.js`. This relative path works with the nginx reverse proxy configuration (Step 7). No changes needed!
 
 ### Step 7: Configure Nginx
 
@@ -303,24 +302,7 @@ sudo nginx -t
 sudo systemctl restart nginx
 ```
 
-### Step 8: Update Frontend API URL
-
-For the nginx proxy setup, update `frontend/src/api.js`:
-
-```javascript
-// Change from localhost to relative path (uses nginx proxy)
-const API_BASE_URL = '/api'
-```
-
-Then rebuild:
-
-```bash
-cd /home/ubuntu/aihub/frontend
-npm run build
-sudo cp -r dist/* /var/www/html/
-```
-
-### Step 9: Access Your Application
+### Step 8: Access Your Application
 
 - **Frontend**: `http://<EC2-PUBLIC-IP>`
 - **Backend API**: `http://<EC2-PUBLIC-IP>/api`
