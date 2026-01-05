@@ -1,34 +1,66 @@
 # AI Hub - Enterprise AI Demo Platform
 
-A comprehensive demo platform showcasing 10 AI use cases built with LangGraph, FastAPI, and React. Features agentic workflows with real-time visualization, multi-modal AI (vision + text), and human-in-the-loop capabilities.
+A comprehensive demo platform showcasing 12 AI use cases built with LangGraph, FastAPI, and React. Features **multi-agent systems**, agentic workflows with real-time visualization, multi-modal AI (vision + text), and human-in-the-loop capabilities.
 
 ![AI Hub](https://img.shields.io/badge/AI-Hub-blue?style=for-the-badge)
 ![LangGraph](https://img.shields.io/badge/LangGraph-Framework-green?style=for-the-badge)
+![Multi-Agent](https://img.shields.io/badge/Multi--Agent-Systems-orange?style=for-the-badge)
 ![OpenRouter](https://img.shields.io/badge/OpenRouter-LLM-purple?style=for-the-badge)
 
 ## ✨ Features
 
-- **10 Enterprise AI Use Cases** - Ready-to-demo AI agents for various industries
+- **12 Enterprise AI Use Cases** - Ready-to-demo AI agents for various industries
+- **Multi-Agent Systems** - True agent-to-agent collaboration with handoffs
 - **Agentic Workflows** - Multi-step reasoning with real-time progress visualization
 - **Vision AI** - Upload images for damage assessment, document processing, and more
 - **Human-in-the-Loop** - Approval workflows with manager intervention
+- **ML + LLM Integration** - Customer segmentation combining traditional ML with LLM insights
 - **Streaming Responses** - Real-time AI responses with Server-Sent Events (SSE)
 - **Modern UI** - Clean, responsive interface with TailwindCSS
+
+## 🤖 Multi-Agent Architecture
+
+This platform demonstrates **two multi-agent patterns**:
+
+### Supervisor Pattern (Automotive Sales)
+```
+┌─────────────────────────────────────────────┐
+│           🎯 Supervisor Agent               │
+│      (Routes to appropriate specialist)     │
+└──────────────┬──────────────────────────────┘
+               │
+   ┌───────────┼───────────┬───────────┬───────────┐
+   ▼           ▼           ▼           ▼           ▼
+┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐
+│🧠Intent│ │🚗Inventory│ │💰Finance│ │🔧Service│ │🎯TestDrive│
+│Analyzer│ │Specialist│ │Specialist│ │ Advisor │ │Coordinator│
+└────────┘ └────────┘ └────────┘ └────────┘ └────────┘
+```
+
+### Chain Pattern (Order Fulfillment)
+```
+📥 Order Intake → 📦 Inventory → 👤 Human Approval → 🏭 Warehouse → 🚚 Shipping
+     Agent           Agent          (Manager)          Agent         Agent
+```
 
 ## 🎯 Use Cases
 
 | # | Use Case | Description | Technology |
 |---|----------|-------------|------------|
-| 1 | **Automotive Sales Agent** | End-to-end customer journey for vehicle sales, test drives, and financing | Agentic AI, Multi-step Reasoning |
-| 2 | **Vehicle Damage Assessment** | Vision AI for analyzing vehicle damage from photos and estimating repairs | Vision AI, Multimodal Models |
-| 3 | **Document Processing** | Intelligent extraction from shipping documents, invoices, customs forms | Document AI, OCR, Multilingual |
-| 4 | **Marketing Content Studio** | AI-generated marketing content in multiple languages and styles | Generative AI, Localization |
-| 5 | **Compliance Copilot** | Healthcare regulatory compliance analysis and SOP comparison | NLP, Document Understanding |
-| 6 | **Sales Trainer** | Role-play training scenarios with AI-powered customer simulation | Conversational AI |
-| 7 | **Trend Spotter** | Social media trend analysis and market insights for FMCG | Social Listening, Sentiment |
-| 8 | **Warranty Claims** | Automated warranty claim processing with fraud detection | OCR, Fraud Detection AI |
-| 9 | **Cross-Selling Intelligence** | Smart product recommendations and bundle pricing | Recommendation AI |
-| 10 | **Order Fulfillment Agent** | Agentic order processing with human-in-the-loop approval | Agentic AI, Logistics |
+| 1 | **Automotive Sales Agent** ⭐ | Multi-agent system with Supervisor + 5 specialist agents | **Multi-Agent**, Supervisor Pattern |
+| 2 | **Order Fulfillment Agent** ⭐ | Multi-agent chain with human-in-the-loop approval | **Multi-Agent**, Chain Pattern |
+| 3 | **Vehicle Damage Assessment** | Vision AI for analyzing vehicle damage from photos | Vision AI, Multimodal Models |
+| 4 | **Document Processing** | Intelligent extraction from shipping documents, invoices | Document AI, OCR, Multilingual |
+| 5 | **Marketing Content Studio** | AI-generated marketing content in multiple languages | Generative AI, Localization |
+| 6 | **Compliance Copilot** | Healthcare regulatory compliance analysis and SOP comparison | NLP, Document Understanding |
+| 7 | **Sales Trainer** | Role-play training scenarios with AI customer simulation | Conversational AI |
+| 8 | **Trend Spotter** | Social media trend analysis and market insights for FMCG | Social Listening, Sentiment |
+| 9 | **Warranty Claims** | Automated warranty claim processing with fraud detection | OCR, Fraud Detection AI |
+| 10 | **Cross-Selling Intelligence** | Smart product recommendations and bundle pricing | Recommendation AI |
+| 11 | **Voice Analytics** 🆕 | Customer service call sentiment analysis | Speech-to-Text, NLP |
+| 12 | **Customer Segmentation** 🆕 | ML-powered RFM analysis with LLM insights | ML + LLM, Churn Prediction |
+
+⭐ = Multi-Agent System | 🆕 = New
 
 ## 🚀 Quick Start
 
@@ -93,13 +125,19 @@ aihub/
 │   ├── app/
 │   │   ├── agents/            # AI Agents (one per use case)
 │   │   │   ├── base_agent.py  # Abstract base agent class
-│   │   │   ├── automotive_sales_agent.py
-│   │   │   ├── damage_assessment_agent.py
+│   │   │   ├── automotive_sales_agent.py  # 🤖 Multi-Agent (Supervisor)
+│   │   │   ├── order_fulfillment_agent.py # 🤖 Multi-Agent (Chain)
+│   │   │   ├── voice_analytics_agent.py   # 🆕 Voice analysis
+│   │   │   ├── customer_segmentation_agent.py # 🆕 ML + LLM
 │   │   │   └── ...
 │   │   ├── services/          # Reusable services
 │   │   │   ├── llm_service.py     # LangChain LLM wrapper
 │   │   │   ├── openai_service.py  # Direct OpenRouter calls
 │   │   │   └── vision_service.py  # Vision/multimodal support
+│   │   ├── tools/             # Agent tools
+│   │   │   ├── automotive_tools.py
+│   │   │   ├── fulfillment_tools.py
+│   │   │   └── warranty_tools.py
 │   │   ├── data/              # Mock data and stores
 │   │   │   └── mock_data.py   # Simulated business data
 │   │   ├── api/               # API routes
@@ -115,7 +153,8 @@ aihub/
     │   ├── components/        # UI Components
     │   │   ├── Sidebar.jsx    # Navigation sidebar
     │   │   ├── ChatPanel.jsx  # Chat interface
-    │   │   ├── WorkflowVisualizer.jsx  # Workflow progress
+    │   │   ├── WorkflowVisualizer.jsx  # Multi-agent workflow progress
+    │   │   ├── UseCaseDetail.jsx  # Use case descriptions + sample data
     │   │   └── ...
     │   ├── hooks/             # Reusable hooks
     │   │   └── useWorkflow.js # Workflow state management
@@ -151,16 +190,30 @@ The platform uses these models via OpenRouter:
 
 ## 💡 Demo Guide
 
+### Multi-Agent Demos ⭐
+
+Best demonstrations of multi-agent architecture:
+
+1. **Automotive Sales Agent** (Supervisor Pattern)
+   - Try: "Show me vehicles under $35,000"
+   - Watch: Supervisor → Intent Analyzer → Inventory Specialist with agent labels
+   - Each specialist agent has its own LLM and provides specialized insights
+
+2. **Order Fulfillment Agent** (Chain Pattern)
+   - Try: "Process an order for 100 units of Oat Milk"
+   - Watch: Order Intake → Inventory → Human Approval → Warehouse → Shipping
+   - Includes human-in-the-loop approval checkpoint
+
 ### Agentic Workflows (with Progress Bar)
 
 These agents show step-by-step workflow visualization:
 
-1. **Order Fulfillment Agent** - Includes human-in-the-loop approval
-2. **Warranty Claims** - Fraud detection workflow
-3. **Document Processing** - OCR and extraction steps
-4. **Marketing Content Studio** - Content generation pipeline
-5. **Automotive Sales Agent** - Customer journey flow
-6. **Compliance Copilot** - Regulatory analysis workflow
+- **Warranty Claims** - Fraud detection workflow
+- **Document Processing** - OCR and extraction steps
+- **Marketing Content Studio** - Content generation pipeline
+- **Compliance Copilot** - Regulatory analysis workflow
+- **Voice Analytics** - Transcription → Sentiment → Insights
+- **Customer Segmentation** - Data → RFM → ML → LLM Insights
 
 ### Vision AI Demos
 
@@ -170,14 +223,38 @@ Upload images to these agents:
 2. **Document Processing** - Upload invoices, shipping docs
 3. **Warranty Claims** - Upload receipts and product images
 
-### Human-in-the-Loop
+### ML + LLM Integration
 
-The **Order Fulfillment Agent** demonstrates human approval:
+The **Customer Segmentation** agent demonstrates combining:
+- Traditional ML (RFM scoring, churn prediction)
+- LLM analysis (insights generation, recommendations)
 
-1. Submit an order (e.g., "Process an order for 100 units of Oat Milk")
-2. Watch the workflow progress
-3. A "Manager Approval" dialog appears
-4. Click Approve or Reject to continue
+## 🔧 Multi-Agent Implementation Details
+
+### Automotive Sales - Supervisor Pattern
+
+```python
+# 5 Specialist Agents, each with its own LLM
+class IntentAnalyzerAgent:      # 🧠 Classifies customer intent
+class InventorySpecialistAgent: # 🚗 Searches vehicles, recommends
+class FinanceSpecialistAgent:   # 💰 Calculates financing, advises
+class ServiceAdvisorAgent:      # 🔧 Handles service requests
+class TestDriveCoordinatorAgent: # 🎯 Schedules test drives
+
+class AutomotiveSalesAgent:     # 🎯 Supervisor - routes to specialists
+```
+
+### Order Fulfillment - Chain Pattern
+
+```python
+# 4 Chain Agents that process sequentially
+class OrderIntakeAgent:    # 📥 Validates orders
+class InventoryAgent:      # 📦 Checks & allocates stock
+class WarehouseAgent:      # 🏭 Generates pick lists
+class ShippingAgent:       # 🚚 Schedules delivery
+
+# Human-in-the-loop between Inventory and Warehouse
+```
 
 ## 📚 Tech Stack
 
