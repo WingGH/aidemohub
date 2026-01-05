@@ -12,6 +12,7 @@ from .cross_selling_agent import CrossSellingAgent
 from .order_fulfillment_agent import OrderFulfillmentAgent
 from .voice_analytics_agent import VoiceAnalyticsAgent
 from .customer_segmentation_agent import CustomerSegmentationAgent
+from .expense_claim_agent import ExpenseClaimAgent
 
 __all__ = [
     "BaseAgent",
@@ -27,5 +28,6 @@ __all__ = [
     "OrderFulfillmentAgent",
     "VoiceAnalyticsAgent",
     "CustomerSegmentationAgent",
+    "ExpenseClaimAgent",
 ]
 

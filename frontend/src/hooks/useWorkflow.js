@@ -46,7 +46,8 @@ export const WORKFLOW_AGENTS = [
   'automotive_sales',
   'compliance',
   'voice_analytics',
-  'customer_segmentation'
+  'customer_segmentation',
+  'expense_claim'
 ]
 
 /**
@@ -118,7 +119,8 @@ export function useWorkflow(agentId) {
       automotive_sales: 'Automotive Sales Workflow',
       compliance: 'Compliance Copilot Workflow',
       voice_analytics: 'Voice Analytics Workflow',
-      customer_segmentation: 'Customer Segmentation Workflow'
+      customer_segmentation: 'Customer Segmentation Workflow',
+      expense_claim: 'Expense Claim Workflow'
     }
     return titles[id] || 'Workflow Progress'
   }, [])

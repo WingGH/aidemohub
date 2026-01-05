@@ -461,6 +461,48 @@ const useCaseDetails = {
         { id: "CUS-A006", name: "Frank Ho - Declining", details: "$4,800 spend, 25 orders, Decreasing activity" }
       ]
     }
+  },
+  expense_claim: {
+    title: "Expense Claim Processing",
+    subtitle: "Multi-Agent Chain with Dual Approval Workflow",
+    description: "A **multi-agent chain system** for expense claim processing with dual human-in-the-loop approval. The workflow includes: OCR Agent → Validation Agent → Manager Approval → Finance Approval. Each agent has specialized responsibilities, with human checkpoints for manager and finance approvals.",
+    howItWorks: [
+      "📷 **OCR Agent** extracts receipt data from uploaded images using Vision AI",
+      "✅ **Validation Agent** checks claim against company expense policies",
+      "🧑‍💼 **Manager Approval** (Human-in-the-loop) for claims > $200",
+      "💰 **Finance Approval** (Human-in-the-loop) for final payment authorization",
+      "Each agent adds insights and passes state to the next in the chain",
+      "Small claims (<$200) can skip manager approval for faster processing"
+    ],
+    tryPrompts: [
+      "Submit an expense claim for $125.50 taxi fare",
+      "Process a client dinner receipt for $850 HKD",
+      "Submit travel expense for flight ticket $3200",
+      "I have a hotel receipt for $1450 to claim"
+    ],
+    technologies: ["Multi-Agent Chain", "Dual Approval", "Vision AI", "Human-in-the-Loop", "Policy Engine"],
+    businessValue: "Reduces expense processing time by 60% while maintaining compliance and audit trails",
+    architecture: [
+      { type: "agent", name: "OCR Agent", description: "Vision AI for receipt text extraction and parsing" },
+      { type: "agent", name: "Validation Agent", description: "Policy checking with LLM-generated summaries" },
+      { type: "agent", name: "Manager Agent", description: "Boss approval checkpoint for claims > $200" },
+      { type: "agent", name: "Finance Agent", description: "Final approval and payment scheduling" },
+      { type: "llm", name: "4x LLM Instances", description: "Each agent uses LLM for analysis and advice" },
+      { type: "vision", name: "Vision AI", description: "GPT-4V for receipt image understanding" },
+      { type: "data", name: "Expense Policies", description: "Category limits and approval thresholds" },
+      { type: "api", name: "Payment System", description: "Integration with finance/ERP for reimbursement" }
+    ],
+    sampleData: {
+      title: "Sample Expense Claims",
+      description: "Pre-loaded expense claims demonstrating various approval states",
+      items: [
+        { id: "EXP-001", name: "Client Dinner - Peninsula Hotel", details: "$850 HKD - Meals - Approved & Paid" },
+        { id: "EXP-002", name: "Flight to Shanghai", details: "$3,200 HKD - Travel - Pending Finance Approval" },
+        { id: "EXP-003", name: "Office Supplies - IKEA", details: "$450 HKD - Supplies - Approved & Paid" },
+        { id: "EXP-004", name: "Taxi to Airport", details: "$125.50 HKD - Travel - Auto-approved (small amount)" },
+        { id: "EXP-005", name: "Hotel Stay - JW Marriott", details: "$1,450 HKD - Accommodation - On Hold (missing receipt)" }
+      ]
+    }
   }
 }
 

@@ -24,7 +24,11 @@ import {
   Wrench,
   Target,
   Mic,
-  PieChart
+  PieChart,
+  Receipt,
+  BadgeCheck,
+  DollarSign,
+  ScanLine
 } from 'lucide-react'
 
 const stepIcons = {
@@ -49,6 +53,7 @@ const stepIcons = {
   intent: Brain,
   inventory: Package,
   finance: CreditCard,
+  finance_approval: DollarSign,
   service: Wrench,
   test_drive: Target,
   intake: Package,
@@ -58,6 +63,11 @@ const stepIcons = {
   agent: Bot,
   voice: Mic,
   ml: PieChart,
+  // Expense claim icons
+  ocr: ScanLine,
+  validation: BadgeCheck,
+  manager_approval: UserCheck,
+  receipt: Receipt,
   default: Circle
 }
 
@@ -74,6 +84,11 @@ const agentColors = {
   'Warehouse': 'amber',
   'Shipping': 'rose',
   'Human': 'violet',
+  // Expense claim agents
+  'OCR Agent': 'cyan',
+  'Validation Agent': 'blue',
+  'Manager': 'amber',
+  'Finance': 'emerald',
   'default': 'gray'
 }
 
@@ -278,6 +293,14 @@ export const AGENT_WORKFLOWS = {
     { id: 'rfm', label: 'Calculate RFM', icon: 'search', status: 'pending' },
     { id: 'ml', label: 'ML Prediction', icon: 'ml', status: 'pending' },
     { id: 'insights', label: 'Generate Insights', icon: 'complete', status: 'pending' },
+  ],
+  
+  // Multi-Agent: Expense Claim (Chain Pattern with Dual Approval)
+  expense_claim: [
+    { id: 'ocr', step: 'ocr', label: 'Extract Receipt', icon: 'ocr', status: 'pending', agent: 'OCR Agent' },
+    { id: 'validation', step: 'validation', label: 'Validate Claim', icon: 'validation', status: 'pending', agent: 'Validation Agent' },
+    { id: 'manager_approval', step: 'manager_approval', label: 'Manager Approval', icon: 'manager_approval', status: 'pending', agent: 'Manager' },
+    { id: 'finance_approval', step: 'finance_approval', label: 'Finance Approval', icon: 'finance_approval', status: 'pending', agent: 'Finance' },
   ],
 }
 

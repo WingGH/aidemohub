@@ -95,7 +95,7 @@ export async function sendMessageWithImage(agentId, message, imageFile, conversa
   return response.json()
 }
 
-export async function sendMessageWithImageStream(agentId, message, imageFile, onStepUpdate, onResponse, conversationHistory = null) {
+export async function sendMessageWithImageStream(agentId, message, imageFile, onStepUpdate, onResponse, onApprovalRequired = null, conversationHistory = null) {
   const formData = new FormData()
   formData.append('agent_id', agentId)
   formData.append('message', message)
@@ -146,6 +146,10 @@ export async function sendMessageWithImageStream(agentId, message, imageFile, on
             onResponse(parsed.content)
           } else if (parsed.type === 'error') {
             onResponse(`❌ Error: ${parsed.content}`)
+          } else if (parsed.type === 'approval_required' && onApprovalRequired) {
+            // Human-in-the-loop approval required
+            onStepUpdate(parsed.all_steps || [])
+            onApprovalRequired(parsed)
           }
         } catch (e) {
           console.warn('Failed to parse SSE data:', data, e)

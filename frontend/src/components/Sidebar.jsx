@@ -14,6 +14,8 @@ const categoryColors = {
   'HR & Training': 'from-yellow-500 to-orange-500',
   'Customer Service': 'from-indigo-500 to-blue-500',
   'Sales': 'from-purple-500 to-pink-500',
+  'Finance': 'from-emerald-500 to-teal-500',
+  'Analytics': 'from-violet-500 to-purple-500',
 }
 
 const categoryBgColors = {
@@ -24,6 +26,8 @@ const categoryBgColors = {
   'HR & Training': 'bg-yellow-50 border-yellow-200 hover:bg-yellow-100',
   'Customer Service': 'bg-indigo-50 border-indigo-200 hover:bg-indigo-100',
   'Sales': 'bg-purple-50 border-purple-200 hover:bg-purple-100',
+  'Finance': 'bg-emerald-50 border-emerald-200 hover:bg-emerald-100',
+  'Analytics': 'bg-violet-50 border-violet-200 hover:bg-violet-100',
 }
 
 function Sidebar({ agents, selectedAgent, onSelectAgent, collapsed, onToggleCollapse, loading }) {

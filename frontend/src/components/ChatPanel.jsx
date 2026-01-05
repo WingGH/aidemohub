@@ -144,6 +144,12 @@ const agentPrompts = {
     "Analyze customer Alice Chan",
     "Show customers in the At Risk segment",
     "What is RFM analysis?"
+  ],
+  expense_claim: [
+    "Submit an expense claim for $125.50 taxi fare",
+    "Process a client dinner receipt for $850 HKD",
+    "Submit travel expense for flight ticket $3200",
+    "I have a hotel receipt for $1450 to claim"
   ]
 }
 
@@ -232,6 +238,11 @@ function ChatPanel({ agent, messages, onNewMessage, onClearConversation, onBackT
           (content) => {
             const assistantMessage = { role: 'assistant', content }
             onNewMessage([...newMessages, assistantMessage])
+          },
+          // onApprovalRequired - called when human approval is needed (e.g., expense claims)
+          (approvalData) => {
+            setPendingApproval(approvalData)
+            setIsLoading(false)
           },
           conversationHistory
         )
@@ -548,18 +559,72 @@ Please generate engaging copy for all specified channels.`
                     {pendingApproval.details && (
                       <div className="bg-gray-50 rounded-lg p-3 mb-4 text-sm">
                         <div className="grid gap-2">
-                          <div className="flex justify-between">
-                            <span className="text-gray-500">Order ID:</span>
-                            <span className="font-medium text-gray-800">{pendingApproval.details.order_id}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-500">Total Items:</span>
-                            <span className="font-medium text-gray-800">{pendingApproval.details.total_items}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-500">Est. Value:</span>
-                            <span className="font-medium text-green-600">{pendingApproval.details.estimated_value}</span>
-                          </div>
+                          {/* Order Fulfillment fields */}
+                          {pendingApproval.details.order_id && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-500">Order ID:</span>
+                              <span className="font-medium text-gray-800">{pendingApproval.details.order_id}</span>
+                            </div>
+                          )}
+                          {pendingApproval.details.total_items && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-500">Total Items:</span>
+                              <span className="font-medium text-gray-800">{pendingApproval.details.total_items}</span>
+                            </div>
+                          )}
+                          {pendingApproval.details.estimated_value && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-500">Est. Value:</span>
+                              <span className="font-medium text-green-600">{pendingApproval.details.estimated_value}</span>
+                            </div>
+                          )}
+                          
+                          {/* Expense Claim fields */}
+                          {pendingApproval.details.claim_id && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-500">Claim ID:</span>
+                              <span className="font-medium text-gray-800">{pendingApproval.details.claim_id}</span>
+                            </div>
+                          )}
+                          {pendingApproval.details.amount && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-500">Amount:</span>
+                              <span className="font-medium text-green-600">{pendingApproval.details.amount}</span>
+                            </div>
+                          )}
+                          {pendingApproval.details.type && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-500">Type:</span>
+                              <span className="font-medium text-gray-800 capitalize">{pendingApproval.details.type.replace('_', ' ')}</span>
+                            </div>
+                          )}
+                          {pendingApproval.details.merchant && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-500">Merchant:</span>
+                              <span className="font-medium text-gray-800">{pendingApproval.details.merchant}</span>
+                            </div>
+                          )}
+                          {pendingApproval.details.date && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-500">Date:</span>
+                              <span className="font-medium text-gray-800">{pendingApproval.details.date}</span>
+                            </div>
+                          )}
+                          {pendingApproval.details.validation_status && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-500">Validation:</span>
+                              <span className={`font-medium ${pendingApproval.details.validation_status === 'passed' ? 'text-green-600' : 'text-amber-600'}`}>
+                                {pendingApproval.details.validation_status === 'passed' ? '✓ Passed' : '⚠ Flagged'}
+                              </span>
+                            </div>
+                          )}
+                          {pendingApproval.details.manager_status && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-500">Manager:</span>
+                              <span className="font-medium text-green-600">{pendingApproval.details.manager_status}</span>
+                            </div>
+                          )}
+                          
                           {pendingApproval.details.items_summary && (
                             <div className="mt-2 pt-2 border-t border-gray-200">
                               <span className="text-gray-500 text-xs">Items:</span>

@@ -19,6 +19,7 @@ from app.agents import (
     OrderFulfillmentAgent,
     VoiceAnalyticsAgent,
     CustomerSegmentationAgent,
+    ExpenseClaimAgent,
 )
 from app.data.mock_data import MockDataStore
 from app.services.llm_service import LLMService
@@ -39,6 +40,7 @@ agents = {
     "order_fulfillment": OrderFulfillmentAgent(),
     "voice_analytics": VoiceAnalyticsAgent(),
     "customer_segmentation": CustomerSegmentationAgent(),
+    "expense_claim": ExpenseClaimAgent(),
 }
 
 
@@ -176,6 +178,15 @@ async def list_agents():
             "icon": "👥",
             "category": "Analytics",
             "features": ["RFM Analysis", "Churn Prediction", "Segment Tagging", "LTV Prediction"]
+        },
+        {
+            "id": "expense_claim",
+            "name": "Expense Claim",
+            "description": "Multi-agent expense claim processing with dual approval workflow (Manager → Finance)",
+            "icon": "🧾",
+            "category": "Finance",
+            "features": ["Receipt OCR", "Policy Validation", "Manager Approval", "Finance Approval", "Payment Processing"],
+            "accepts_image": True
         },
     ]
     return {"agents": agent_list}
@@ -462,7 +473,13 @@ async def submit_approval(request: ApprovalRequest):
 @router.post("/approval/continue-stream")
 async def continue_approval_stream(request: ApprovalRequest):
     """Continue a workflow after approval with streaming updates."""
-    agent = agents["order_fulfillment"]
+    # Determine which agent based on approval_id prefix
+    approval_id = request.approval_id
+    
+    if approval_id.startswith("MGR-") or approval_id.startswith("FIN-"):
+        agent = agents["expense_claim"]
+    else:
+        agent = agents["order_fulfillment"]
     
     async def generate():
         context = {"approval_id": request.approval_id, "approved": request.approved}

@@ -377,6 +377,99 @@ class MockDataStore:
         }
     ]
     
+    # Expense Claims Sample Data
+    EXPENSE_CLAIMS = [
+        {
+            "claim_id": "EXP-001",
+            "employee": "John Wong",
+            "department": "Sales",
+            "date": "2024-01-15",
+            "merchant": "The Peninsula Hotel",
+            "amount": 850.00,
+            "currency": "HKD",
+            "expense_type": "meals",
+            "description": "Client dinner - ABC Corp partnership discussion",
+            "receipt_status": "attached",
+            "manager_approval": "approved",
+            "finance_approval": "approved",
+            "payment_status": "paid",
+            "payment_ref": "PAY-A1B2C3D4"
+        },
+        {
+            "claim_id": "EXP-002",
+            "employee": "Sarah Lee",
+            "department": "Marketing",
+            "date": "2024-01-18",
+            "merchant": "Cathay Pacific",
+            "amount": 3200.00,
+            "currency": "HKD",
+            "expense_type": "travel",
+            "description": "Flight to Shanghai for trade show",
+            "receipt_status": "attached",
+            "manager_approval": "approved",
+            "finance_approval": "pending",
+            "payment_status": "pending",
+            "payment_ref": None
+        },
+        {
+            "claim_id": "EXP-003",
+            "employee": "Michael Chen",
+            "department": "IT",
+            "date": "2024-01-20",
+            "merchant": "IKEA Hong Kong",
+            "amount": 450.00,
+            "currency": "HKD",
+            "expense_type": "office_supplies",
+            "description": "Ergonomic keyboard and mouse for home office",
+            "receipt_status": "attached",
+            "manager_approval": "approved",
+            "finance_approval": "approved",
+            "payment_status": "paid",
+            "payment_ref": "PAY-E5F6G7H8"
+        },
+        {
+            "claim_id": "EXP-004",
+            "employee": "Emily Lam",
+            "department": "Finance",
+            "date": "2024-01-22",
+            "merchant": "Uber",
+            "amount": 125.50,
+            "currency": "HKD",
+            "expense_type": "travel",
+            "description": "Taxi to airport - urgent client meeting",
+            "receipt_status": "attached",
+            "manager_approval": "skipped",
+            "finance_approval": "approved",
+            "payment_status": "paid",
+            "payment_ref": "PAY-I9J0K1L2"
+        },
+        {
+            "claim_id": "EXP-005",
+            "employee": "David Ng",
+            "department": "Sales",
+            "date": "2024-01-25",
+            "merchant": "JW Marriott",
+            "amount": 1450.00,
+            "currency": "HKD",
+            "expense_type": "accommodation",
+            "description": "Hotel stay during Shenzhen client visit",
+            "receipt_status": "missing",
+            "manager_approval": "pending",
+            "finance_approval": "pending",
+            "payment_status": "on_hold",
+            "payment_ref": None
+        }
+    ]
+    
+    # Expense Policies
+    EXPENSE_POLICIES = {
+        "meals": {"daily_limit": 500, "requires_receipt": True, "auto_approve_under": 200},
+        "travel": {"daily_limit": 2000, "requires_receipt": True, "auto_approve_under": 300},
+        "accommodation": {"daily_limit": 1500, "requires_receipt": True, "auto_approve_under": 0},
+        "office_supplies": {"daily_limit": 1000, "requires_receipt": True, "auto_approve_under": 200},
+        "entertainment": {"daily_limit": 800, "requires_receipt": True, "auto_approve_under": 0}
+    }
+    
     # Segment Definitions
     CUSTOMER_SEGMENTS = {
         "Champion": {
@@ -532,6 +625,21 @@ class MockDataStore:
         return cls.CUSTOMER_SEGMENTS
     
     @classmethod
+    def get_expense_claims(cls, status: str = None, employee: str = None) -> List[Dict[str, Any]]:
+        """Get expense claims, optionally filtered."""
+        claims = cls.EXPENSE_CLAIMS
+        if status:
+            claims = [c for c in claims if c.get("payment_status") == status]
+        if employee:
+            claims = [c for c in claims if c.get("employee", "").lower() == employee.lower()]
+        return claims
+    
+    @classmethod
+    def get_expense_policies(cls) -> Dict[str, Any]:
+        """Get expense policies."""
+        return cls.EXPENSE_POLICIES
+    
+    @classmethod
     def get_all_sample_data(cls) -> Dict[str, Any]:
         """Get all sample data for display."""
         return {
@@ -545,6 +653,8 @@ class MockDataStore:
             "parts": cls.PARTS,
             "call_recordings": cls.CALL_RECORDINGS,
             "customer_behavior": cls.CUSTOMER_BEHAVIOR,
-            "customer_segments": cls.CUSTOMER_SEGMENTS
+            "customer_segments": cls.CUSTOMER_SEGMENTS,
+            "expense_claims": cls.EXPENSE_CLAIMS,
+            "expense_policies": cls.EXPENSE_POLICIES
         }
 
