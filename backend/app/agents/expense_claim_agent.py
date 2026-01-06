@@ -12,6 +12,8 @@ from langgraph.graph import StateGraph, END
 from datetime import datetime
 import uuid
 import asyncio
+import json
+import re
 
 from .base_agent import BaseAgent
 from app.services.llm_service import LLMService
@@ -62,18 +64,29 @@ Be thorough and accurate. Format your findings clearly."""
         image_base64 = state.get("receipt_image")
         
         if image_base64:
-            # Use vision AI to analyze the receipt
+            # Use vision AI to analyze the receipt with JSON output
             prompt = f"""{self.get_system_prompt()}
 
-Analyze this receipt image and extract:
-1. Merchant/Vendor name
-2. Date of purchase
-3. Total amount and currency
-4. List of items with prices
-5. Payment method (if visible)
-6. Receipt number (if visible)
+Analyze this receipt image carefully and extract all information.
 
-Format your response as structured data."""
+IMPORTANT: Return your response as a valid JSON object with these exact fields:
+{{
+    "merchant": "store or vendor name",
+    "date": "date of purchase (YYYY-MM-DD format if possible)",
+    "total_amount": 0.00,
+    "currency": "USD/HKD/EUR/etc",
+    "expense_type": "meals/travel/accommodation/office_supplies/entertainment",
+    "items": [
+        {{"description": "item name", "amount": 0.00}}
+    ],
+    "payment_method": "cash/card/etc",
+    "receipt_number": "receipt or invoice number if visible"
+}}
+
+Be accurate with the total amount - look for words like "Total", "Amount Due", "Grand Total", "Total Fare".
+For currency, look for symbols like $, HK$, €, £ or currency codes.
+For taxi/transport receipts, the fare is the total amount.
+Return ONLY the JSON object, no other text."""
 
             # Get mime type from state or detect from base64
             mime_type = state.get("mime_type", "image/jpeg")
@@ -94,13 +107,12 @@ Format your response as structured data."""
                 mime_type
             )
             
-            # Parse the analysis into structured data
-            ocr_data = {
-                "raw_analysis": analysis,
-                "extracted_at": datetime.now().isoformat(),
-                "confidence": "high" if image_base64 else "n/a",
-                "source": "vision_ai"
-            }
+            # Parse the JSON response from GPT-4o
+            ocr_data = self._parse_vision_response(analysis)
+            ocr_data["raw_analysis"] = analysis
+            ocr_data["extracted_at"] = datetime.now().isoformat()
+            ocr_data["confidence"] = "high"
+            ocr_data["source"] = "vision_ai_gpt4o"
         else:
             # Demo mode - simulate OCR extraction
             ocr_data = self._simulate_ocr_extraction(state["messages"][-1]["content"])
@@ -111,10 +123,149 @@ Format your response as structured data."""
             "agent_sequence": state.get("agent_sequence", []) + ["OCR Agent"]
         }
     
+    def _parse_vision_response(self, response: str) -> Dict[str, Any]:
+        """Parse the JSON response from GPT-4o vision model."""
+        try:
+            # Try to extract JSON from the response
+            # First, try direct JSON parsing
+            try:
+                data = json.loads(response)
+                return self._normalize_ocr_data(data)
+            except json.JSONDecodeError:
+                pass
+            
+            # Try to find JSON block in the response
+            json_match = re.search(r'\{[\s\S]*\}', response)
+            if json_match:
+                try:
+                    data = json.loads(json_match.group())
+                    return self._normalize_ocr_data(data)
+                except json.JSONDecodeError:
+                    pass
+            
+            # Fallback: Parse text response manually
+            return self._parse_text_response(response)
+            
+        except Exception as e:
+            print(f"Error parsing vision response: {e}")
+            return self._get_default_ocr_data()
+    
+    def _normalize_ocr_data(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """Normalize and validate OCR data fields."""
+        # Ensure total_amount is a float
+        total_amount = data.get("total_amount", 0)
+        if isinstance(total_amount, str):
+            # Remove currency symbols and parse
+            total_amount = re.sub(r'[^\d.]', '', total_amount)
+            try:
+                total_amount = float(total_amount) if total_amount else 0
+            except ValueError:
+                total_amount = 0
+        
+        # Determine expense type if not provided
+        expense_type = data.get("expense_type", "")
+        merchant = str(data.get("merchant", "")).lower()
+        if not expense_type:
+            if any(word in merchant for word in ["taxi", "uber", "lyft", "airline", "transport"]):
+                expense_type = "travel"
+            elif any(word in merchant for word in ["hotel", "inn", "resort", "airbnb"]):
+                expense_type = "accommodation"
+            elif any(word in merchant for word in ["restaurant", "cafe", "food", "coffee"]):
+                expense_type = "meals"
+            else:
+                expense_type = "office_supplies"
+        
+        return {
+            "merchant": data.get("merchant", "Unknown Merchant"),
+            "date": data.get("date", datetime.now().strftime("%Y-%m-%d")),
+            "total_amount": total_amount,
+            "currency": data.get("currency", "USD"),
+            "expense_type": expense_type,
+            "items": data.get("items", []),
+            "payment_method": data.get("payment_method", "Unknown"),
+            "receipt_number": data.get("receipt_number", f"REC-{uuid.uuid4().hex[:8].upper()}")
+        }
+    
+    def _parse_text_response(self, response: str) -> Dict[str, Any]:
+        """Parse a text response when JSON parsing fails."""
+        data = self._get_default_ocr_data()
+        
+        # Try to extract merchant name (usually first line or after "Merchant:")
+        merchant_match = re.search(r'[Mm]erchant[:\s]+([^\n,]+)', response)
+        if merchant_match:
+            data["merchant"] = merchant_match.group(1).strip()
+        else:
+            # Try first capitalized words
+            first_line = response.split('\n')[0].strip()
+            if first_line and len(first_line) < 100:
+                data["merchant"] = first_line
+        
+        # Extract total amount - look for various patterns
+        amount_patterns = [
+            r'[Tt]otal[:\s]*\$?([\d,]+\.?\d*)',
+            r'[Aa]mount[:\s]*\$?([\d,]+\.?\d*)',
+            r'[Ff]are[:\s]*(?:HK)?\$?([\d,]+\.?\d*)',
+            r'[Gg]rand [Tt]otal[:\s]*\$?([\d,]+\.?\d*)',
+            r'\$\s*([\d,]+\.?\d*)'
+        ]
+        for pattern in amount_patterns:
+            match = re.search(pattern, response)
+            if match:
+                try:
+                    amount_str = match.group(1).replace(',', '')
+                    data["total_amount"] = float(amount_str)
+                    break
+                except ValueError:
+                    continue
+        
+        # Extract currency
+        if 'HK$' in response or 'HKD' in response:
+            data["currency"] = "HKD"
+        elif '€' in response or 'EUR' in response:
+            data["currency"] = "EUR"
+        elif '£' in response or 'GBP' in response:
+            data["currency"] = "GBP"
+        else:
+            data["currency"] = "USD"
+        
+        # Extract date
+        date_patterns = [
+            r'(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})',
+            r'(\d{4}[/-]\d{1,2}[/-]\d{1,2})'
+        ]
+        for pattern in date_patterns:
+            match = re.search(pattern, response)
+            if match:
+                data["date"] = match.group(1)
+                break
+        
+        # Determine expense type
+        response_lower = response.lower()
+        if any(word in response_lower for word in ["taxi", "uber", "fare", "transport"]):
+            data["expense_type"] = "travel"
+        elif any(word in response_lower for word in ["hotel", "accommodation"]):
+            data["expense_type"] = "accommodation"
+        elif any(word in response_lower for word in ["restaurant", "cafe", "food", "meal"]):
+            data["expense_type"] = "meals"
+        
+        return data
+    
+    def _get_default_ocr_data(self) -> Dict[str, Any]:
+        """Return default OCR data structure."""
+        return {
+            "merchant": "Unknown Merchant",
+            "date": datetime.now().strftime("%Y-%m-%d"),
+            "total_amount": 0,
+            "currency": "USD",
+            "expense_type": "office_supplies",
+            "items": [],
+            "payment_method": "Unknown",
+            "receipt_number": f"REC-{uuid.uuid4().hex[:8].upper()}"
+        }
+    
     def _simulate_ocr_extraction(self, message: str) -> Dict[str, Any]:
         """Simulate OCR extraction for demo purposes."""
         # Parse any amounts mentioned in the message
-        import re
         amounts = re.findall(r'\$?(\d+(?:\.\d{2})?)', message)
         amount = float(amounts[0]) if amounts else 125.50
         
