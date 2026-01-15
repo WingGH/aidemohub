@@ -13,6 +13,7 @@ from .order_fulfillment_agent import OrderFulfillmentAgent
 from .voice_analytics_agent import VoiceAnalyticsAgent
 from .customer_segmentation_agent import CustomerSegmentationAgent
 from .expense_claim_agent import ExpenseClaimAgent
+from .taxi_receipt_agent import TaxiReceiptAgent
 
 __all__ = [
     "BaseAgent",
@@ -29,5 +30,6 @@ __all__ = [
     "VoiceAnalyticsAgent",
     "CustomerSegmentationAgent",
     "ExpenseClaimAgent",
+    "TaxiReceiptAgent",
 ]
 

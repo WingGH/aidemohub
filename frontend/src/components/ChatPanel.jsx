@@ -150,6 +150,12 @@ const agentPrompts = {
     "Process a client dinner receipt for $850 HKD",
     "Submit travel expense for flight ticket $3200",
     "I have a hotel receipt for $1450 to claim"
+  ],
+  taxi_receipt: [
+    "Submit this HK taxi receipt for reimbursement",
+    "Process my taxi fare from today's trip",
+    "Claim this taxi receipt HK$58.10",
+    "Submit taxi expense for client meeting"
   ]
 }
 

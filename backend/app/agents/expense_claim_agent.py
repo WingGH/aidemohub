@@ -101,14 +101,20 @@ Return ONLY the JSON object, no other text."""
                 else:
                     mime_type = "image/jpeg"
             
+            print(f"[OCR] Calling vision API with mime_type: {mime_type}")
+            print(f"[OCR] Image base64 length: {len(image_base64)}")
+            
             analysis = await self.vision_service.analyze_image(
                 image_base64,
                 prompt,
                 mime_type
             )
             
+            print(f"[OCR] Vision API response: {analysis[:500]}...")
+            
             # Parse the JSON response from GPT-4o
             ocr_data = self._parse_vision_response(analysis)
+            print(f"[OCR] Parsed data: merchant={ocr_data.get('merchant')}, amount={ocr_data.get('total_amount')}, currency={ocr_data.get('currency')}")
             ocr_data["raw_analysis"] = analysis
             ocr_data["extracted_at"] = datetime.now().isoformat()
             ocr_data["confidence"] = "high"

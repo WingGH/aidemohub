@@ -14,12 +14,13 @@ if not OPENROUTER_API_KEY:
     print("   See .env.example for the required format.")
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 
-# Model Configuration - Using GPT-4o via OpenRouter
-DEFAULT_MODEL = "openai/gpt-4o"
-VISION_MODEL = "openai/gpt-4o"
+# Model Configuration via OpenRouter
+# Primary: OpenAI GPT-4.1 (latest GPT-4 turbo)
+DEFAULT_MODEL = "openai/gpt-4.1"
+VISION_MODEL = "openai/gpt-4.1"
 
-# Fallback to Claude if GPT-4o fails
-FALLBACK_MODEL = "anthropic/claude-3.5-sonnet"
+# Fallback: Google Gemini Pro 1.5 (good global availability)
+FALLBACK_MODEL = "google/gemini-pro-1.5"
 
 # LLM Provider: "langchain", "openai" (recommended), or "litellm"
 # "openai" uses httpx to call OpenRouter directly - simpler and more reliable

@@ -89,6 +89,10 @@ const agentColors = {
   'Validation Agent': 'blue',
   'Manager': 'amber',
   'Finance': 'emerald',
+  // Taxi receipt agents
+  'Taxi OCR': 'yellow',
+  'Validator': 'blue',
+  // Note: 'Supervisor' already defined above
   'default': 'gray'
 }
 
@@ -301,6 +305,13 @@ export const AGENT_WORKFLOWS = {
     { id: 'validation', step: 'validation', label: 'Validate Claim', icon: 'validation', status: 'pending', agent: 'Validation Agent' },
     { id: 'manager_approval', step: 'manager_approval', label: 'Manager Approval', icon: 'manager_approval', status: 'pending', agent: 'Manager' },
     { id: 'finance_approval', step: 'finance_approval', label: 'Finance Approval', icon: 'finance_approval', status: 'pending', agent: 'Finance' },
+  ],
+  
+  // HK Taxi Receipt (Simplified Chain with Auto-Approval)
+  taxi_receipt: [
+    { id: 'ocr', step: 'ocr', label: 'Scan Receipt', icon: 'receipt', status: 'pending', agent: 'Taxi OCR' },
+    { id: 'validation', step: 'validation', label: 'Validate Fare', icon: 'validation', status: 'pending', agent: 'Validator' },
+    { id: 'approval', step: 'approval', label: 'Approval', icon: 'approval', status: 'pending', agent: 'Supervisor' },
   ],
 }
 

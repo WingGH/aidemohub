@@ -20,6 +20,7 @@ from app.agents import (
     VoiceAnalyticsAgent,
     CustomerSegmentationAgent,
     ExpenseClaimAgent,
+    TaxiReceiptAgent,
 )
 from app.data.mock_data import MockDataStore
 from app.services.llm_service import LLMService
@@ -41,6 +42,7 @@ agents = {
     "voice_analytics": VoiceAnalyticsAgent(),
     "customer_segmentation": CustomerSegmentationAgent(),
     "expense_claim": ExpenseClaimAgent(),
+    "taxi_receipt": TaxiReceiptAgent(),
 }
 
 
@@ -186,6 +188,15 @@ async def list_agents():
             "icon": "🧾",
             "category": "Finance",
             "features": ["Receipt OCR", "Policy Validation", "Manager Approval", "Finance Approval", "Payment Processing"],
+            "accepts_image": True
+        },
+        {
+            "id": "taxi_receipt",
+            "name": "HK Taxi Receipt",
+            "description": "Specialized agent for Hong Kong taxi receipt claims with auto-approval for small fares",
+            "icon": "🚕",
+            "category": "Finance",
+            "features": ["Taxi OCR", "Fare Validation", "Auto-Approval", "Supervisor Approval", "HK$ Support"],
             "accepts_image": True
         },
     ]
@@ -478,6 +489,8 @@ async def continue_approval_stream(request: ApprovalRequest):
     
     if approval_id.startswith("MGR-") or approval_id.startswith("FIN-"):
         agent = agents["expense_claim"]
+    elif approval_id.startswith("TAXI-"):
+        agent = agents["taxi_receipt"]
     else:
         agent = agents["order_fulfillment"]
     
