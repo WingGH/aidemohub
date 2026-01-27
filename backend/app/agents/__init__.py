@@ -1,5 +1,7 @@
 """Agents module for AI agents using LangGraph."""
 from .base_agent import BaseAgent
+from .pharma_account_agent import PharmaAccountAgent
+from .drug_info_agent import DrugInfoAgent
 from .automotive_sales_agent import AutomotiveSalesAgent
 from .damage_assessment_agent import DamageAssessmentAgent
 from .document_processing_agent import DocumentProcessingAgent
@@ -17,6 +19,8 @@ from .taxi_receipt_agent import TaxiReceiptAgent
 
 __all__ = [
     "BaseAgent",
+    "PharmaAccountAgent",
+    "DrugInfoAgent",
     "AutomotiveSalesAgent",
     "DamageAssessmentAgent",
     "DocumentProcessingAgent",

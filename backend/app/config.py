@@ -15,12 +15,12 @@ if not OPENROUTER_API_KEY:
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 
 # Model Configuration via OpenRouter
-# Primary: OpenAI GPT-4.1 (latest GPT-4 turbo)
-DEFAULT_MODEL = "openai/gpt-4.1"
-VISION_MODEL = "openai/gpt-4.1"
+# Primary: Google Gemini 2.0 Flash (fast, works globally)
+DEFAULT_MODEL = "google/gemini-2.0-flash-001"
+VISION_MODEL = "google/gemini-2.0-flash-001"
 
-# Fallback: Google Gemini Pro 1.5 (good global availability)
-FALLBACK_MODEL = "google/gemini-pro-1.5"
+# Fallback: Same model (or try another available one)
+FALLBACK_MODEL = "google/gemini-2.0-flash-001"
 
 # LLM Provider: "langchain", "openai" (recommended), or "litellm"
 # "openai" uses httpx to call OpenRouter directly - simpler and more reliable

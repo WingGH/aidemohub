@@ -34,6 +34,89 @@ const architectureIcons = {
 
 // Detailed descriptions for each use case
 const useCaseDetails = {
+  pharma_account: {
+    title: "Pharma Account Sales Assistant",
+    subtitle: "Hospital account management for pharmaceutical sales",
+    description: "An AI assistant for **pharmaceutical sales representatives** to quickly access hospital account information, track sales performance against targets, review purchase history, and get answers to policy FAQs. Designed for salesmen who visit hospitals to sell medications.",
+    howItWorks: [
+      "🏥 **Account Lookup** - Retrieve hospital details, contacts, and tier status",
+      "📊 **Sales Performance** - View YTD sales vs annual targets with achievement percentages",
+      "📦 **Purchase History** - Review past orders by account with category breakdown",
+      "❓ **FAQ & Policies** - Get instant answers on pricing, delivery, returns, and compliance",
+      "📅 **Visit Scheduling** - See last visit date and next scheduled appointment",
+      "💡 **Smart Insights** - Get proactive recommendations for each account"
+    ],
+    tryPrompts: [
+      "How is Queen Mary Hospital doing?",
+      "Show me the purchase history for Prince of Wales Hospital",
+      "What's the pricing policy for volume orders?",
+      "List all my accounts and their target achievement",
+      "What did Hong Kong Sanatorium buy recently?"
+    ],
+    technologies: ["Conversational AI", "Account Management", "Sales Analytics", "FAQ Bot"],
+    businessValue: "Empowers sales reps with instant access to account data, reducing pre-visit prep time by 70%",
+    architecture: [
+      { type: "llm", name: "Large Language Model", description: "GPT-4 for natural language understanding and response generation" },
+      { type: "agent", name: "Intent Analyzer", description: "Classifies queries into account, sales, history, or FAQ categories" },
+      { type: "data", name: "Account Database", description: "Hospital profiles with contacts, tiers, and targets" },
+      { type: "data", name: "Sales Database", description: "Transaction history and purchase records" },
+      { type: "data", name: "FAQ Knowledge Base", description: "Company policies on pricing, delivery, returns, etc." },
+      { type: "api", name: "CRM Integration", description: "Sync with Salesforce/SAP for live account data" }
+    ],
+    sampleData: {
+      title: "Hospital Accounts",
+      description: "Sample hospital accounts with sales targets and performance",
+      items: [
+        { id: "HOS-001", name: "Queen Mary Hospital", details: "Platinum | Target: HKD 2.5M | Achievement: 75%" },
+        { id: "HOS-002", name: "Prince of Wales Hospital", details: "Gold | Target: HKD 1.8M | Achievement: 90%" },
+        { id: "HOS-003", name: "Hong Kong Sanatorium & Hospital", details: "Platinum | Target: HKD 3.2M | Achievement: 90%" },
+        { id: "HOS-004", name: "Matilda International Hospital", details: "Gold | Target: HKD 1.5M | Achievement: 65%" },
+        { id: "HOS-005", name: "Tuen Mun Hospital", details: "Silver | Target: HKD 1.2M | Achievement: 70%" }
+      ]
+    }
+  },
+  drug_info: {
+    title: "Drug Information & Compliance",
+    subtitle: "Pharmaceutical product search with compliance guidance",
+    description: "A comprehensive AI assistant for pharmaceutical salesmen to **search drug information**, check **stock levels**, and understand **compliance requirements**. Get detailed product info including indications, dosage, contraindications, and regulatory requirements for controlled substances.",
+    howItWorks: [
+      "🔍 **Drug Search** - Find drugs by name, generic name, or therapeutic category",
+      "📋 **Product Details** - View indications, dosage, side effects, and interactions",
+      "📦 **Stock Inquiry** - Check real-time inventory levels and warehouse locations",
+      "⚖️ **Compliance Info** - Understand controlled substance and cold chain requirements",
+      "💰 **Pricing** - Get pack sizes and pricing information",
+      "🔬 **Clinical Details** - Access contraindications and drug interaction warnings"
+    ],
+    tryPrompts: [
+      "Tell me about Cardiomax",
+      "What cardiovascular drugs do we have?",
+      "Check stock for Diabetix 500mg",
+      "What are the requirements for controlled substances?",
+      "Compare our diabetes medications",
+      "What are the cold chain requirements?"
+    ],
+    technologies: ["Drug Database", "Compliance Engine", "Inventory Management", "Clinical AI"],
+    businessValue: "Enables informed sales conversations with 95% faster drug info retrieval and compliance accuracy",
+    architecture: [
+      { type: "llm", name: "Large Language Model", description: "GPT-4 for clinical information and compliance guidance" },
+      { type: "agent", name: "Drug Search Engine", description: "Semantic search across drug catalog and categories" },
+      { type: "data", name: "Drug Catalog", description: "Complete product database with clinical information" },
+      { type: "data", name: "Inventory System", description: "Real-time stock levels and warehouse locations" },
+      { type: "data", name: "Compliance Database", description: "Regulatory requirements and storage guidelines" },
+      { type: "api", name: "Regulatory API", description: "Department of Health compliance verification" }
+    ],
+    sampleData: {
+      title: "Drug Catalog",
+      description: "Sample pharmaceutical products with stock levels",
+      items: [
+        { id: "CARD-001", name: "Cardiomax 100mg", details: "Cardiovascular | 5,000 units | HKD 250/pack" },
+        { id: "DIAB-001", name: "Diabetix 500mg", details: "Diabetes | 12,000 units | HKD 140/pack" },
+        { id: "ONCO-001", name: "Oncotab 50mg", details: "Oncology | 800 units | Controlled | HKD 900/pack" },
+        { id: "ANTI-001", name: "Antibiox 500mg", details: "Antibiotics | 15,000 units | HKD 60/pack" },
+        { id: "IMMU-001", name: "Immunoboost 250mg", details: "Immunology | 500 units | Cold Chain | HKD 400/pack" }
+      ]
+    }
+  },
   automotive_sales: {
     title: "Automotive Sales & Service Agent",
     subtitle: "Multi-Agent System with Supervisor Pattern",

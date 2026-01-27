@@ -241,6 +241,22 @@ function WorkflowVisualizer({ steps, currentStep, title, showAgentLabels = true 
 
 // Predefined workflows for different agents - updated for multi-agent architecture
 export const AGENT_WORKFLOWS = {
+  // Pharma Account Sales Workflow
+  pharma_account: [
+    { id: 'receive', step: 'receive', label: 'Receiving Query', icon: 'receive', status: 'pending' },
+    { id: 'analyze', step: 'analyze', label: 'Analyzing Request', icon: 'intent', status: 'pending' },
+    { id: 'lookup', step: 'lookup', label: 'Looking Up Account Data', icon: 'search', status: 'pending' },
+    { id: 'respond', step: 'respond', label: 'Generating Response', icon: 'complete', status: 'pending' },
+  ],
+  
+  // Drug Information & Compliance Workflow
+  drug_info: [
+    { id: 'receive', step: 'receive', label: 'Receiving Query', icon: 'receive', status: 'pending' },
+    { id: 'search', step: 'search', label: 'Searching Drug Database', icon: 'search', status: 'pending' },
+    { id: 'compliance', step: 'compliance', label: 'Checking Compliance', icon: 'verify', status: 'pending' },
+    { id: 'respond', step: 'respond', label: 'Generating Response', icon: 'complete', status: 'pending' },
+  ],
+  
   // Multi-Agent: Automotive Sales (Supervisor Pattern)
   automotive_sales: [
     { id: 'supervisor', step: 'supervisor', label: 'Supervisor', icon: 'supervisor', status: 'pending', agent: 'Supervisor' },

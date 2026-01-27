@@ -7,6 +7,8 @@ import base64
 import json
 
 from app.agents import (
+    PharmaAccountAgent,
+    DrugInfoAgent,
     AutomotiveSalesAgent,
     DamageAssessmentAgent,
     DocumentProcessingAgent,
@@ -29,6 +31,8 @@ router = APIRouter()
 
 # Initialize agents (lazy loading would be better for production)
 agents = {
+    "pharma_account": PharmaAccountAgent(),
+    "drug_info": DrugInfoAgent(),
     "automotive_sales": AutomotiveSalesAgent(),
     "damage_assessment": DamageAssessmentAgent(),
     "document_processing": DocumentProcessingAgent(),
@@ -81,6 +85,22 @@ async def root():
 async def list_agents():
     """List all available agents with their metadata."""
     agent_list = [
+        {
+            "id": "pharma_account",
+            "name": "Pharma Account Sales",
+            "description": "Hospital account info, sales targets, purchase history and FAQ for pharmaceutical salesmen",
+            "icon": "🏥",
+            "category": "Pharmaceutical",
+            "features": ["Account Info", "Sales vs Target", "Purchase History", "FAQ & Policies"]
+        },
+        {
+            "id": "drug_info",
+            "name": "Drug Information & Compliance",
+            "description": "Search drug details, stock levels, and compliance requirements for pharmaceutical products",
+            "icon": "💊",
+            "category": "Pharmaceutical",
+            "features": ["Drug Search", "Stock Inquiry", "Compliance Info", "Clinical Details"]
+        },
         {
             "id": "automotive_sales",
             "name": "Automotive Sales Agent",

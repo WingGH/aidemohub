@@ -30,6 +30,8 @@ function App() {
   }
 
   const getFallbackAgents = () => [
+    { id: "pharma_account", name: "Pharma Account Sales", description: "Hospital account info, sales targets, purchase history and FAQ for pharmaceutical salesmen", icon: "🏥", category: "Pharmaceutical", features: ["Account Info", "Sales vs Target", "Purchase History", "FAQ"] },
+    { id: "drug_info", name: "Drug Information & Compliance", description: "Search drug details, stock levels, and compliance requirements for pharmaceutical products", icon: "💊", category: "Pharmaceutical", features: ["Drug Search", "Stock Inquiry", "Compliance Info"] },
     { id: "automotive_sales", name: "Automotive Sales Agent", description: "End-to-end customer journey for vehicle sales and service", icon: "🚗", category: "Automotive", features: ["Sales Inquiry", "Test Drive Booking", "Financing Options"] },
     { id: "damage_assessment", name: "Vehicle Damage Assessment", description: "Vision AI for analyzing vehicle damage and repair estimates", icon: "📸", category: "Automotive", features: ["Image Analysis", "Cost Estimation"], accepts_image: true },
     { id: "document_processing", name: "Document Processing", description: "Intelligent extraction from shipping documents and invoices", icon: "📄", category: "Logistics", features: ["OCR", "Multilingual"], accepts_image: true },

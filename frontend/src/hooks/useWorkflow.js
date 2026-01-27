@@ -39,6 +39,8 @@ import { AGENT_WORKFLOWS } from '../components/WorkflowVisualizer'
  * Add new agentic agents here to enable workflow display
  */
 export const WORKFLOW_AGENTS = [
+  'pharma_account',
+  'drug_info',
   'order_fulfillment',
   'warranty_claims', 
   'document_processing',
@@ -113,6 +115,8 @@ export function useWorkflow(agentId) {
    */
   const getWorkflowTitle = useCallback((id) => {
     const titles = {
+      pharma_account: 'Pharma Account Workflow',
+      drug_info: 'Drug Information Workflow',
       order_fulfillment: 'Order Fulfillment Workflow',
       warranty_claims: 'Warranty Claims Workflow',
       document_processing: 'Document Processing Workflow',

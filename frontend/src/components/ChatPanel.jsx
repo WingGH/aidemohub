@@ -78,6 +78,20 @@ const DEMO_IMAGES = {
 }
 
 const agentPrompts = {
+  pharma_account: [
+    "How is Queen Mary Hospital doing?",
+    "Show me all my accounts and their target achievement",
+    "What did Prince of Wales Hospital buy recently?",
+    "What's the pricing policy for volume orders?",
+    "Show purchase history for Hong Kong Sanatorium"
+  ],
+  drug_info: [
+    "Tell me about Cardiomax",
+    "What cardiovascular drugs do we have?",
+    "Check stock for Diabetix 500mg",
+    "What are the requirements for controlled substances?",
+    "Show me all diabetes medications"
+  ],
   automotive_sales: [
     "Show me available vehicles under $50,000",
     "I want to schedule a test drive for the BMW 3 Series",
